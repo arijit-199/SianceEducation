@@ -111,7 +111,7 @@ const OtpScreen = ({ navigation, route }) => {
             <Entypo name="lock-open" color={style.mainColor} size={80} />
 
             <Text style={styles.boldText}>Verify OTP</Text>
-            <Text style={styles.lightText}>Please enter the OTP sent to email. The OTP will be valid only 1 minute.</Text>
+            <Text style={styles.lightText}>Please enter the OTP sent to email {email}. The OTP will be valid only 1 minute.</Text>
 
             <View style={styles.otpInputContainer}>
                 {otpArr.map((digit, index) => (

@@ -12,6 +12,8 @@ const CourseDetailsScreen = () => {
             <CustomHeader />
 
             <ScrollView contentContainerStyle={styles.courseListContainer} showsVerticalScrollIndicator={false}>
+                <Text style={styles.courseHeading}>Courses</Text>
+
                 {arr.map((course, i) => (
                     <View style={styles.courseDetailsCardContainer} key={i}>
                         <View style={styles.cardTop}>
@@ -20,15 +22,15 @@ const CourseDetailsScreen = () => {
                             </View>
 
                             <View style={styles.courseDetails}>
-                                <Text style={{ fontWeight: "500" }}>Course: JEE - Advanced</Text>
-                                <Text style={{ fontWeight: "500" }}>Duration: 8 months</Text>
-                                <Text style={{ fontWeight: "500" }}>Fees: 500</Text>
+                                <Text style={{ fontWeight: "500" }}>Course:  JEE - Advanced</Text>
+                                <Text style={{ fontWeight: "500" }}>Course duration: 8 months</Text>
+                                <Text style={{ fontWeight: "500" }}>Fees:  ₹500</Text>
                             </View>
                         </View>
 
                         <View style={styles.courseBottom}>
                             <TouchableOpacity style={styles.courseViewBtn}>
-                                <Text style={styles.courseViewBtnText}>View Course</Text>
+                                <Text style={styles.courseViewBtnText}>Add to Cart</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity style={styles.courseBuyBtn}>

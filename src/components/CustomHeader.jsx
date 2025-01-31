@@ -7,7 +7,7 @@ import AntDesign from "react-native-vector-icons/AntDesign"
 
 
 
-const CustomHeader = () => {
+const CustomHeader = ({ navigation }) => {
     const [showMenuModal, setShowMenuModal] = useState(false);
 
 
@@ -23,18 +23,12 @@ const CustomHeader = () => {
             {
                 showMenuModal &&
                 <View style={styles.menuModal}>
-                    <View style={styles.menuModalInner}>
-                        <TouchableOpacity style={styles.listButton}>
-                            <AntDesign name={"shoppingcart"} color={"black"} size={22} />
-                            <Text>Cart</Text>
-                        </TouchableOpacity>
-
-
+                    {/* <View style={styles.menuModalInner}> */}
                         <TouchableOpacity style={styles.listButton}>
                             <MaterialIcons name={"logout"} color={"black"} size={22} />
                             <Text>Logout</Text>
                         </TouchableOpacity>
-                    </View>
+                    {/* </View> */}
 
                     <TouchableOpacity style={styles.listButton}>
                         <AntDesign name={"close"} color={"black"} size={22} />
@@ -80,12 +74,12 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     menuModal: {
-        padding: 12,
+        padding: 18,
         backgroundColor: "white",
         borderWidth: 0,
         borderRadius: 12,
         width: "50%",
-        height: 240,
+        height: 100,
         position: "absolute",
         top: 48,
         right: 16,
@@ -97,7 +91,8 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
-        justifyContent: "space-between",
+        gap: 16
+        // justifyContent: "space-between",
     },
     listButton: {
         display: "flex",

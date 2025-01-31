@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
         letterSpacing: 0.8
     },
     solidBtn: {
-        marginTop: 24,
+        marginTop: 16,
         backgroundColor: style.mainColor,
         fontSize: 14,
         color: "white",
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
         fontSize: 24
     },
     otpBtn: {
-        marginTop: 6,
+        marginTop: -6,
         backgroundColor: style.mainColor,
         fontSize: 14,
         color: "white",
@@ -172,20 +172,17 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         width: "100%",
         height: "100%",
-        alignItems: "center",
     },
     signUpScreenInner: {
         margin: 0,
-        padding: 0,
+        padding: 4,
+        paddingBottom: 12,
         backgroundColor: "white",
         width: "100%",
-        maxHeight: "90%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "space-between"
+        flexGrow: 1,
     },
     pgTitle: {
+        paddingHorizontal: 4,
         marginTop: 12,
         marginBottom: 24,
         color: "black",
@@ -211,9 +208,10 @@ const styles = StyleSheet.create({
         fontSize: 12
     },
     link: {
-        marginTop: 54,
+        marginTop: 24,
         color: "gray",
-        fontSize: 14
+        fontSize: 14,
+        textAlign: "center"
     },
     row: {
         display: "flex",
@@ -270,11 +268,47 @@ const styles = StyleSheet.create({
         height: 36,
         justifyContent: "center"
     },
+    swiperContainer: {
+        width: "100%",
+        height: 180,
+        borderRadius: 12,
+        borderWidth: 0,
+        overflow: "hidden",
+
+    },
+    slide: {
+        width: "100%",
+        height: 160,
+        borderRadius: 12,
+        borderWidth: 0,
+        overflow: "hidden"
+    },
+    image: {
+        width: "100%",
+        height: "100%"
+    },
+    paginationStyle: {
+        height: 10,
+        bottom: '1%',
+    },
+    dotStyle: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: '#dadada',
+        margin: 3,
+    },
+    activeDotStyle: {
+        width: 18,
+        height: 8,
+        borderRadius: 8,
+        margin: 3,
+    },
     bannerContainer: {
         width: "96%",
         height: 160,
         borderWidth: 0,
-        borderRadius: 12,
+        borderRadius: 6,
         overflow: "hidden",
         backgroundColor: "white"
     },
@@ -289,18 +323,22 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
-        height: 60,
+        height: 50,
         backgroundColor: "transparent"
     },
     boardItemContainer: {
-        padding: 14,
+        padding: 12,
         paddingHorizontal: 40,
         backgroundColor: "white",
         borderWidth: 0,
         borderRadius: 6,
+        shadowColor: "gray",
+        shadowOffset: { width: 8, height: -2 },
+        elevation: 6,
+        shadowRadius: 12,
     },
     selectedBoardItemContainer: {
-        padding: 14,
+        padding: 12,
         paddingHorizontal: 40,
         backgroundColor: style.mainColor,
         borderWidth: 0,
@@ -335,7 +373,11 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 6
+        gap: 6,
+        shadowColor: "gray",
+        shadowOffset: { width: 8, height: -2 },
+        elevation: 6,
+        shadowRadius: 12,
     },
     classImageContainer: {
         width: "100%",
@@ -365,6 +407,15 @@ const styles = StyleSheet.create({
         minHeight: "100%",
         backgroundColor: style.bgColor,
     },
+    courseHeading: {
+        paddingTop: 6,
+        paddingHorizontal: 12,
+        width: "100%",
+        color: "black",
+        fontSize: 18,
+        fontWeight: "400",
+        textAlign: 'left'
+    },
     courseListContainer: {
         padding: 10,
         paddingBottom: 100,
@@ -372,19 +423,24 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 10
+        gap: 16
     },
+
     courseDetailsCardContainer: {
         padding: 12,
         width: "96%",
-        height: 204,
+        height: 184,
         backgroundColor: "white",
         borderWidth: 0,
         borderRadius: 10,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 6
+        gap: 6,
+        shadowColor: "gray",
+        shadowOffset: { width: 8, height: -2 },
+        elevation: 6,
+        shadowRadius: 12,
     },
     cardTop: {
         width: "100%",
@@ -395,8 +451,8 @@ const styles = StyleSheet.create({
         backgroundColor: "white"
     },
     courseImageContainer: {
-        width: 120,
-        height: 120,
+        width: 100,
+        height: 100,
         borderRadius: 10,
         overflow: "hidden"
     },
@@ -449,7 +505,249 @@ const styles = StyleSheet.create({
 
 
 
+    //////////////      PROFILE     //////////////
+    profileScreenContainer: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: style.bgColor,
+        alignItems: "center"
+    },
+    profileInnerContainer: {
+        width: "100%",
+        height: "100%",
+        alignItems: "center",
+        gap: 12,
+    },
+    profileTop: {
+        width: "100%",
+        height: "35%",
+        display: "flex",
+        flexDirection: "column",
+        gap: "4%",
+        alignItems: "center",
+    },
+    profilePictureContainer: {
+        width: "100%",
+        height: "60%",
+        alignItems: "center",
+        position: "relative",
+    },
+    profilePicture: {
+        width: 120,
+        height: 120,
+        borderWidth: 0,
+        borderRadius: 100,
+        overflow: "hidden",
+    },
+    uploadPictureBtn: {
+        padding: 10,
+        paddingHorizontal: 24,
+        backgroundColor: style.mainColor,
+        borderWidth: 0,
+        borderRadius: 6,
+    },
+    changePictureBtn: {
+        padding: 12,
+        width: 48,
+        height: 48,
+        justifyContent: "center",
+        backgroundColor: style.mainColor,
+        borderWidth: 0,
+        borderRadius: 50,
+        position: "absolute",
+        bottom: 12,
+        right: 0
+    },
+    uploadPictureBtnText: {
+        color: "white",
+        textAlign: 'center',
+        fontWeight: "500",
+        fontSize: 14,
+    },
+    profileBottom: {
+        width: "100%",
+        gap: 12,
+        alignItems: "center"
+    },
+    immutableDataBox: {
+        padding: 10,
+        paddingVertical: 24,
+        backgroundColor: "white",
+        borderWidth: 0,
+        borderRadius: 4,
+        width: Dimensions.get('window').width * 0.92,
+        gap: 12
+    },
+    spaceDataRow: {
+        width: "100%",
+        height: 20,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between"
+    },
+    row: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12
+    },
 
+    mutableDataBox: {
+        padding: 10,
+        paddingVertical: 24,
+        backgroundColor: "white",
+        borderWidth: 0,
+        borderRadius: 4,
+        width: Dimensions.get('window').width * 0.92,
+        gap: 24
+    },
+    editTextInput: {
+        padding: 6,
+        paddingHorizontal: 14,
+        height: 40,
+        borderWidth: 1.2,
+        borderColor: style.mainColor,
+        borderRadius: 10,
+        width: "85%",
+        letterSpacing: 0.8
+    },
+
+    userDetailsText: {
+        width: "85%",
+        color: "black",
+        fontWeight: "500",
+    },
+    badge: {
+        paddingVertical: 2,
+        paddingHorizontal: 10,
+        backgroundColor: style.mainColor,
+        borderRadius: 10
+    },
+    badgeText: {
+        color: "white",
+        fontSize: 10,
+        fontWeight: "500",
+    },
+    disabledUploadPictureBtn: {
+        padding: 10,
+        paddingHorizontal: 24,
+        backgroundColor: style.mainColor,
+        borderWidth: 0,
+        borderRadius: 6,
+        opacity: 0.5
+    },
+
+
+
+    /////////////       CART      ////////////
+    cartScreenContainer: {
+        width: "100%",
+        minHeight: "100%",
+        backgroundColor: style.bgColor,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    cartScreenInner: {
+        width: "100%",
+        height: "89.5%",
+    },
+    cartHeading: {
+        padding: 18,
+        paddingHorizontal: 24,
+        color: "black",
+        fontSize: 18,
+    },
+    cartListContainer: {
+        gap: 12,
+        flexGrow: 1,
+        paddingBottom: "10%",
+    },
+    cartItemContainer: {
+        width: "100%",
+        borderWidth: 0,
+        borderRadius: 6,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        backgroundColor: "white"
+    },
+    cartTop: {
+        padding: 20,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 24,
+    },
+    cartBottom: {
+        borderWidth: 1,
+        borderColor: "#eee",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    itemImageContainer: {
+        width: 80,
+        height: 80,
+        borderWidth: 0,
+        borderRadius: 12,
+        overflow: "hidden",
+    },
+    itemImage: {
+        width: "100%",
+        height: "100%",
+        objectFit: "contain"
+    },
+    itemDetailsContainer: {
+        gap: 12
+    },
+    removeButton: {
+        width: "50%",
+        padding: 10,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 6,
+        borderRightWidth: 1,
+        borderColor: "#eee"
+    },
+    removeButtonText: {
+        fontWeight: "500",
+        color: "black"
+    },
+    cartFooter: {
+        paddingHorizontal: 24,
+        paddingVertical: 10,
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: "space-between",
+        backgroundColor: "white",
+        borderWidth: 1,
+        borderColor: "#eeeeee"
+    },
+    orderButton: {
+        padding: 12,
+        width: 140,
+        backgroundColor: style.mainColor,
+        borderWidth: 0,
+        borderRadius: 12,
+    },
+    orderButtonText: {
+        color: "white",
+        fontSize: 15,
+        fontWeight: "500",
+        textAlign: "center",
+    },
+    totalPrice: {
+        color: "black",
+        fontWeight: "500",
+        fontSize: 18
+    }
 })
 
 export default styles

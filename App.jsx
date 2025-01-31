@@ -2,7 +2,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign"
+import AntDesign from "react-native-vector-icons/AntDesign";
+import Feather from "react-native-vector-icons/Feather";
+import EvilIcons from "react-native-vector-icons/EvilIcons";
+
 
 
 //////////       SCREENS       //////////////
@@ -13,6 +16,8 @@ import SignupOtp from "./src/screens/SignupOtp";
 import Homescreen from "./src/screens/Homescreen";
 import { style } from "./src/styles/globalStyles";
 import CourseDetailsScreen from "./src/screens/CourseDetailsScreen";
+import Profile from "./src/screens/Profile";
+import Cart from "./src/screens/Cart";
 
 
 
@@ -36,7 +41,6 @@ function App() {
 
 
 
-
   function TabScreen() {
     return (
       <Tab.Navigator>
@@ -46,11 +50,41 @@ function App() {
           options={{
             headerShown: false,
             tabBarLabel: "Home",
-            tabBarIconStyle: {color: "gray"},
+            tabBarIconStyle: { color: "gray" },
             tabBarActiveTintColor: style.mainColor,
             tabBarInactiveTintColor: "gray",
             tabBarIcon: ({ color, focused }) => (
-              <AntDesign name="home" color={focused ? style.mainColor : "gray"} size={20} />
+              <AntDesign name="home" color={focused ? style.mainColor : "gray"} size={25} />
+            )
+          }} />
+
+        <Tab.Screen
+          name={"Profile"}
+          component={Profile}
+          options={{
+            headerShown: false,
+            tabBarLabel: "Profile",
+            // tabBarItemStyle: {margin},
+            tabBarIconStyle: { color: "gray" },
+            tabBarActiveTintColor: style.mainColor,
+            tabBarInactiveTintColor: "gray",
+            tabBarIcon: ({ color, focused }) => (
+              <EvilIcons name="user" color={focused ? style.mainColor : "gray"} size={35} />
+            )
+          }} />
+
+        <Tab.Screen
+          name={"Cart"}
+          component={Cart}
+          options={{
+            headerShown: false,
+            tabBarLabel: "Cart",
+            // tabBarItemStyle: {margin},
+            tabBarIconStyle: { color: "gray" },
+            tabBarActiveTintColor: style.mainColor,
+            tabBarInactiveTintColor: "gray",
+            tabBarIcon: ({ color, focused }) => (
+              <Feather name="shopping-cart" color={focused ? style.mainColor : "gray"} size={28} />
             )
           }} />
       </Tab.Navigator>

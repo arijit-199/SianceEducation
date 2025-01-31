@@ -1,4 +1,4 @@
-import { Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import Entypo from "react-native-vector-icons/Entypo"
 import { style } from './../styles/globalStyles';
@@ -6,8 +6,7 @@ import styles from "./../styles/styles";
 import axios from 'axios';
 import { apiErrorHandler, concatString } from '../helper';
 import { BASE_URL } from '../services/apiManager';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ScreenStackHeaderRightView } from 'react-native-screens';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignupOtp = ({ navigation, route }) => {
     const [otpArr, setOtpArr] = useState(["", "", "", "", "", ""]);
@@ -19,7 +18,7 @@ const SignupOtp = ({ navigation, route }) => {
 
     const otpRefs = [useRef(), useRef(), useRef(), useRef(), useRef(), useRef()];
 
-    const { fullname, mobile, email, dob } = route.params.details;
+    const { fullname, mobile, email, dob, referralCode } = route.params.details;
 
     // console.log(fullname, mobile, email, dob)
 
@@ -41,7 +40,7 @@ const SignupOtp = ({ navigation, route }) => {
 
 
     const handleVerifyOtp = async () => {
-        if(otp?.length < 6) return ToastAndroid.show("OTP must be 6 digits long!!", ToastAndroid.SHORT)
+        if (otp?.length < 6) return ToastAndroid.show("OTP must be 6 digits long!!", ToastAndroid.SHORT)
 
         const body = {
             full_name: fullname,
@@ -49,7 +48,9 @@ const SignupOtp = ({ navigation, route }) => {
             email: email,
             dob: dob,
             otp: otp,
+            referral_code: referralCode
         }
+        
         // console.log(body)
 
         try {
@@ -59,11 +60,16 @@ const SignupOtp = ({ navigation, route }) => {
             const response = await axios.post(`${BASE_URL}/register/verify-otp/`, body);
             console.log(response.data);
 
-            if(response.status === 200) {
-               ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+            if (response.status === 200) {
+                ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+
+                const currentUser = { fullname, mobile, email, dob, referralCode }
+                await AsyncStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+                navigation.navigate("Tab");
             }
         } catch (error) {
-            console.log(error, error.message);
+            // console.log(error, error.response.data);
             const errMsg = apiErrorHandler(error);
             setError(errMsg);
             ToastAndroid.show(errMsg, ToastAndroid.SHORT);
@@ -109,7 +115,7 @@ const SignupOtp = ({ navigation, route }) => {
             <Entypo name="lock-open" color={style.mainColor} size={80} />
 
             <Text style={styles.boldText}>Verify OTP</Text>
-            <Text style={styles.lightText}>Please enter the OTP sent to email. The OTP will be valid only 1 minute.</Text>
+            <Text style={styles.lightText}>Please enter the OTP sent to email {email}. The OTP will be valid only 1 minute.</Text>
 
             <View style={styles.otpInputContainer}>
                 {otpArr.map((digit, index) => (
@@ -126,7 +132,14 @@ const SignupOtp = ({ navigation, route }) => {
             </View>
 
             <TouchableOpacity style={styles.otpBtn} onPress={() => handleVerifyOtp()}>
-                <Text style={styles.otpBtnText}>Verify</Text>
+                {loading ?
+                    <>
+                        <ActivityIndicator size={'small'} color={"white"} />
+                        <Text style={styles.solidBtnText}>Please wait...</Text>
+                    </>
+                    :
+                    <Text style={styles.otpBtnText}>Verify</Text>
+                }
             </TouchableOpacity>
 
             {

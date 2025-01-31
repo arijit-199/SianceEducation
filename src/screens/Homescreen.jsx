@@ -1,15 +1,39 @@
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View, FlatList } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import CustomHeader from '../components/CustomHeader';
 import styles from "./../styles/styles";
 import AntDesign from "react-native-vector-icons/AntDesign"
 import banner from "./../../assests/images/login_background2.jpg";
+import Swiper from 'react-native-swiper';
+import axios from 'axios';
 
 
 
-const Homescreen = ({navigation}) => {
+const Homescreen = ({ navigation }) => {
   const arr = [1, 2, 3, 4, 5, 6]
   const [selectedBoard, setSelectedBoard] = useState(null);
+
+  const swiperRef = useRef(null);
+
+  const { width } = Dimensions.get("window");
+
+  const images = [
+    banner, banner, banner
+  ];
+
+
+  const fetchBoards = async() => {
+    try {
+      const response = await axios.get(`http://192.168.29.215:8000/api/board-list/`);
+      console.log("response===>", response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchBoards()
+  }, [])
 
 
   return (
@@ -25,9 +49,26 @@ const Homescreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.bannerContainer}>
-          <Image source={banner} style={styles.banner} />
+        <View style={styles.swiperContainer}>
+          <Swiper
+            ref={swiperRef}
+            loop={true}
+            autoplay={true}
+            autoplayTimeout={3}
+            showsPagination={true} // Set to true to show pagination
+            paginationStyle={styles.paginationStyle} // Add styles for pagination
+            dotStyle={styles.dotStyle} // Add styles for dots
+            activeDotStyle={styles.activeDotStyle} // Add styles for the active dot
+          >
+            {images.map((imageUrl, index) => (
+              <View key={index} style={styles.slide}>
+                <Image source={imageUrl} style={styles.image} />
+              </View>
+            ))}
+          </Swiper>
         </View>
+
+
 
         <ScrollView contentContainerStyle={styles.boardListContainer} horizontal={true} showsHorizontalScrollIndicator={false}>
           <TouchableOpacity style={selectedBoard === null ? styles.selectedBoardItemContainer : styles.boardItemContainer} onPress={() => setSelectedBoard(null)}>
