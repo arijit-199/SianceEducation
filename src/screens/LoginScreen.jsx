@@ -14,30 +14,31 @@ const LoginScreen = ({ navigation }) => {
 
 
     const handleLogin = async () => {
-        // try {
-        // setLoading(true)
-        // setError(null);
+        if(!email) return ToastAndroid.show("Email is required!!", ToastAndroid.SHORT);
+        try {
+            setLoading(true)
+            setError(null);
 
-        // const response = await axios.post(`${BASE_URL}/login/`, { email: email });
-        // console.log("response===>", response.data);
+            const response = await axios.post(`${BASE_URL}/login/`, { email: email });
+            console.log("response===>", response.data);
 
-        // if (response.status === 200) {
-        //     ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-        navigation.navigate("Otp", { email: email });
-        //     }
-        //     else {
-        //         const errMsg = apiErrorHandler(response);
-        //         setError(errMsg);
-        //         ToastAndroid.show(errMsg, ToastAndroid.SHORT);
-        //     }
+            if (response.status === 200) {
+                ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+                navigation.navigate("Otp", { email: email });
+            }
+            else {
+                const errMsg = apiErrorHandler(response);
+                setError(errMsg);
+                ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+            }
 
-        // } catch (error) {
-        //     const errMsg = apiErrorHandler(error);
-        //     setError(errMsg)
-        //     ToastAndroid.show(errMsg, ToastAndroid.SHORT)
-        // } finally {
-        //     setLoading(false);
-        // }
+        } catch (error) {
+            console.log(error);
+            setError(error.response.data.error)
+            ToastAndroid.show(error.response.data.error, ToastAndroid.SHORT)
+        } finally {
+            setLoading(false);
+        }
     }
 
 

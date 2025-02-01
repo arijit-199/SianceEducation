@@ -122,6 +122,9 @@ const styles = StyleSheet.create({
         height: 48,
         borderRadius: 10,
         borderWidth: 0,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
         justifyContent: "center"
     },
     otpBtnText: {
@@ -183,10 +186,10 @@ const styles = StyleSheet.create({
     },
     pgTitle: {
         paddingHorizontal: 4,
-        marginTop: 12,
-        marginBottom: 24,
+        marginTop: 6,
+        marginBottom: 12,
         color: "black",
-        fontSize: 16,
+        fontSize: 24,
         fontWeight: "500"
     },
     formContainer: {
@@ -229,7 +232,8 @@ const styles = StyleSheet.create({
         backgroundColor: style.bgColor,
         width: "100%",
         minHeight: "100%",
-        overflow: "hidden"
+        overflow: "hidden",
+        alignItems: "center",
     },
     homeInnerContainer: {
         width: "100%",
@@ -347,28 +351,36 @@ const styles = StyleSheet.create({
     boardName: {
         color: "black",
         letterSpacing: 0.6,
-        fontWeight: "500"
+        fontWeight: "500",
+        fontSize: 10,
+        textTransform: "uppercase"
     },
     selectedBoardName: {
         color: "white",
         letterSpacing: 0.6,
-        fontWeight: "500"
+        fontWeight: "500",
+        fontSize: 10,
+        textTransform: "uppercase"
+    },
+    className: {
+        fontWeight: "500",
+        fontSize: 14,
     },
     classListContainer: {
         width: "100%",
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+        gap: 12
     },
     classCardContainer: {
         padding: 6,
-        width: "48%",
-        height: 170,
+        width: "47%",
+        height: 150,
         borderWidth: 0,
-        borderRadius: 12,
+        borderRadius: 16,
         backgroundColor: "white",
         display: "flex",
         flexDirection: "column",
@@ -381,7 +393,7 @@ const styles = StyleSheet.create({
     },
     classImageContainer: {
         width: "100%",
-        height: 100,
+        height: "60%",
         borderWidth: 0,
         borderRadius: 8,
         backgroundColor: "white",
@@ -390,12 +402,14 @@ const styles = StyleSheet.create({
     },
     classImage: {
         width: "100%",
-        height: "100%"
+        height: "100%",
+        objectFit: "cover"
     },
     classDetails: {
-        marginTop: 6,
+        marginTop: 4,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        width: "100%",
     },
     fees: {
         fontSize: 13,
@@ -432,7 +446,7 @@ const styles = StyleSheet.create({
         height: 184,
         backgroundColor: "white",
         borderWidth: 0,
-        borderRadius: 10,
+        borderRadius: 20,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -446,14 +460,14 @@ const styles = StyleSheet.create({
         width: "100%",
         display: "flex",
         flexDirection: "row",
-        alignItems: "center",
+        alignItems: "flex-start",
         gap: 12,
         backgroundColor: "white"
     },
     courseImageContainer: {
         width: 100,
         height: 100,
-        borderRadius: 10,
+        borderRadius: 18,
         overflow: "hidden"
     },
     courseImage: {
@@ -461,15 +475,17 @@ const styles = StyleSheet.create({
         height: "100%"
     },
     courseDetails: {
+        marginTop: 6,
+        alignItems: "flex-start",
         width: "100%",
         gap: 4,
     },
     courseBuyBtn: {
-        width: "48%",
+        width: "48.5%",
         height: 40,
         backgroundColor: style.mainColor,
         borderWidth: 0,
-        borderRadius: 6,
+        borderRadius: 12,
         justifyContent: 'center'
     },
     courseBuyBtnText: {
@@ -479,11 +495,11 @@ const styles = StyleSheet.create({
         textAlignVertical: "center"
     },
     courseViewBtn: {
-        width: "48%",
+        width: "48.5%",
         height: 40,
         backgroundColor: "white",
         borderWidth: 1.5,
-        borderRadius: 6,
+        borderRadius: 12,
         borderColor: style.mainColor,
         justifyContent: 'center'
     },
@@ -747,6 +763,25 @@ const styles = StyleSheet.create({
         color: "black",
         fontWeight: "500",
         fontSize: 18
+    },
+    disabledCourseViewBtn: {
+        width: "48.5%",
+        height: 40,
+        backgroundColor: "white",
+        borderWidth: 1.5,
+        borderRadius: 12,
+        borderColor: style.mainColor,
+        justifyContent: 'center',
+        opacity: 0.3
+    },
+    disabledCourseBuyBtn: {
+        width: "48.5%",
+        height: 40,
+        backgroundColor: style.mainColor,
+        borderWidth: 0,
+        borderRadius: 12,
+        justifyContent: 'center',
+        opacity: 0.3
     }
 })
 

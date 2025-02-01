@@ -3,9 +3,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import Entypo from "react-native-vector-icons/Entypo"
 import { style } from './../styles/globalStyles';
 import styles from "./../styles/styles"
-import { concatString } from '../helper';
+import { apiErrorHandler, concatString } from '../helper';
 import { BASE_URL } from '../services/apiManager';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OtpScreen = ({ navigation, route }) => {
     const [otpArr, setOtpArr] = useState(["", "", "", "", "", ""]);
@@ -38,37 +39,50 @@ const OtpScreen = ({ navigation, route }) => {
 
 
     const handleVerifyOtp = async () => {
-        // if (otp?.length < 6) return ToastAndroid.show("OTP must be 6 digits long!!", ToastAndroid.SHORT)
+        if (otp?.length < 6) return ToastAndroid.show("OTP must be 6 digits long!!", ToastAndroid.SHORT)
 
-        // const body = {
-        //     email: email,
-        //     otp: otp,
-        // }
-        // console.log(body)
+        const body = {
+            email: email,
+            otp: otp,
+        }
+        console.log(body)
 
-        // try {
-        //     setLoading(true);
-        //     setError(null);
+        try {
+            setLoading(true);
+            setError(null);
 
-        //     const response = await axios.post(`${BASE_URL}/login/verify-otp/`, body);
-        //     console.log(response.data);
+            const response = await axios.post(`${BASE_URL}/login/verify-otp/`, body);
+            console.log(response.data);
 
-        //     if (response.status === 200) {
-        //         ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-        //     }
-        //     else {
-        //         const errMsg = apiErrorHandler(response);
-        //         setError(errMsg);
-        //         ToastAndroid.show(errMsg, ToastAndroid.SHORT);
-        //     }
-        // } catch (error) {
-        //     console.log(error, error.message);
-        //     const errMsg = apiErrorHandler(error);
-        //     setError(errMsg);
-        //     ToastAndroid.show(errMsg, ToastAndroid.SHORT);
-        // } finally {
-        //     setLoading(false);
-        // }
+            if (response.status === 200) {
+                const accessToken = response.data.access;
+                const refreshToken = response.data.refresh;
+                const currentUser = {
+                    fullName: response.data.full_name,
+                    dob: response.data.dob,
+                    email: response.data.email,
+                    mobile: response.data.mobile,
+                }
+
+                await AsyncStorage.setItem("accessToken", JSON.stringify(accessToken))
+                await AsyncStorage.setItem("refreshToken", JSON.stringify(refreshToken))
+                await AsyncStorage.setItem("currentUser", JSON.stringify(currentUser))
+
+                ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+            }
+            else {
+                const errMsg = apiErrorHandler(response);
+                setError(errMsg);
+                ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+            }
+        } catch (error) {
+            console.log(error, error.message);
+            const errMsg = apiErrorHandler(error);
+            setError(errMsg);
+            ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+        } finally {
+            setLoading(false);
+        }
 
         navigation.navigate("Tab");
     }

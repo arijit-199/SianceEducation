@@ -50,22 +50,22 @@ const SignupOtp = ({ navigation, route }) => {
             otp: otp,
             referral_code: referralCode
         }
-        
-        // console.log(body)
 
         try {
             setLoading(true);
             setError(null);
 
             const response = await axios.post(`${BASE_URL}/register/verify-otp/`, body);
-            console.log(response.data);
+            console.log("response====>", response);
 
-            if (response.status === 200) {
-                ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-
+            if (response.status === 201) {
+                const accessToken = response.data.access_token;
                 const currentUser = { fullname, mobile, email, dob, referralCode }
-                await AsyncStorage.setItem("currentUser", JSON.stringify(currentUser));
 
+                await AsyncStorage.setItem("currentUser", JSON.stringify(currentUser));
+                await AsyncStorage.setItem("accessToken", JSON.stringify(accessToken));
+
+                ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
                 navigation.navigate("Tab");
             }
         } catch (error) {
@@ -114,7 +114,7 @@ const SignupOtp = ({ navigation, route }) => {
         <View style={styles.otpContainer}>
             <Entypo name="lock-open" color={style.mainColor} size={80} />
 
-            <Text style={styles.boldText}>Verify OTP</Text>
+            <Text style={styles.boldText}>Enter OTP</Text>
             <Text style={styles.lightText}>Please enter the OTP sent to email {email}. The OTP will be valid only 1 minute.</Text>
 
             <View style={styles.otpInputContainer}>
@@ -131,15 +131,16 @@ const SignupOtp = ({ navigation, route }) => {
                 ))}
             </View>
 
-            <TouchableOpacity style={styles.otpBtn} onPress={() => handleVerifyOtp()}>
+            <TouchableOpacity style={styles.solidBtn} onPress={() => handleVerifyOtp()}>
                 {loading ?
                     <>
                         <ActivityIndicator size={'small'} color={"white"} />
                         <Text style={styles.solidBtnText}>Please wait...</Text>
                     </>
                     :
-                    <Text style={styles.otpBtnText}>Verify</Text>
+                    <Text style={styles.solidBtnText}>Verify</Text>
                 }
+
             </TouchableOpacity>
 
             {

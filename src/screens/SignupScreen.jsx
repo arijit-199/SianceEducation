@@ -13,7 +13,7 @@ const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [date, setDate] = useState(new Date());
   const [dob, setDob] = useState("");
-  const [referralCode, setReferralCode] = useState("WhdihyWE");
+  const [referralCode, setReferralCode] = useState("yNXGIwHC");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -46,6 +46,7 @@ const SignupScreen = ({ navigation }) => {
       setError(null);
 
       const response = await axios.post('http://192.168.29.215:8000/api/register/', body);
+      console.log("signup response========>>", response);
 
       if (response?.status === 200) {
         ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
@@ -57,7 +58,7 @@ const SignupScreen = ({ navigation }) => {
         setError(errMsg)
       }
     } catch (error) {
-      // console.log(error, error.response.data.message);
+      console.log(error, error.response.data.message);
       const errMsg = apiErrorHandler(error);
       ToastAndroid.show(errMsg, ToastAndroid.SHORT);
       setError(errMsg)
@@ -78,7 +79,7 @@ const SignupScreen = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.signUpScreenInner} showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Fullname *</Text>
+            <Text style={styles.inputLabel}>Full name *</Text>
             <TextInput placeholder='Enter fullname' style={styles.textInput} value={fullname} onChangeText={(val) => setFullname(val)} />
           </View>
 

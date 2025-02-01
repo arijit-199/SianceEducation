@@ -27,7 +27,7 @@ const Cart = () => {
 
                                     <View style={styles.itemDetailsContainer}>
                                         <Text>Course Item 1</Text>
-                                        <Text>1 months</Text>
+                                        <Text>Duration: 1 month</Text>
                                         <Text>₹500</Text>
                                     </View>
                                 </View>
