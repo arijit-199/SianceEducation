@@ -231,25 +231,27 @@ const styles = StyleSheet.create({
     homeMainContainer: {
         backgroundColor: style.bgColor,
         width: "100%",
-        minHeight: "100%",
+        height: Dimensions.get('window').height,
         overflow: "hidden",
         alignItems: "center",
     },
     homeInnerContainer: {
         width: "100%",
+        height: "100%",
         padding: 12,
         paddingVertical: 8,
-        backgroundColor: "transparent",
+        backgroundColor: style.bgColor,
         flexGrow: 1,
         paddingBottom: 75,
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        gap: 12
+        gap: 12,
+        marginBottom: 50
     },
     searchInputContainer: {
+        marginBottom: 6,
         paddingHorizontal: 10,
-        width: "96%",
+        width: "98%",
         height: 48,
         display: "flex",
         flexDirection: "row",
@@ -257,7 +259,8 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         borderWidth: 0,
         borderRadius: 8,
-        backgroundColor: "white"
+        backgroundColor: "white",
+        alignSelf: "center"
     },
     searchInput: {
         backgroundColor: "white",
@@ -273,6 +276,7 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     swiperContainer: {
+        marginBottom: 10,
         width: "100%",
         height: 180,
         borderRadius: 12,
@@ -368,6 +372,7 @@ const styles = StyleSheet.create({
     },
     classListContainer: {
         width: "100%",
+        height: "100%",
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
@@ -782,6 +787,114 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         justifyContent: 'center',
         opacity: 0.3
+    },
+
+
+
+    ///////////       STUDY MATERIAL        /////////////////// 
+    studyMaterialContainer: { 
+       margin: 0,
+       padding: 0,
+       backgroundColor: style.bgColor,
+       width: "100%",
+       height: "100%"
+    },
+    videoListContainer: {
+        margin: 0,
+        padding: 18,
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+        gap: 12,
+    },
+    studyPgTitle: {
+        paddingHorizontal: 24,
+        paddingTop: 20,
+        color: "black",
+        fontSize: 20,
+        letterSpacing: 0.8
+    },
+    singleVideoCard: {
+        margin: 0,
+        padding: 6,
+        backgroundColor: "white",
+        borderWidth: 0,
+        borderRadius: 14,
+        shadowColor: "gray",
+        shadowOffset: { width: 8, height: -2 },
+        elevation: 6,
+        shadowRadius: 12,
+        width: "48%",
+        height: 140,
+        overflow: "hidden",
+        position: 'relative'
+    },
+    videoThumbnailContainer: {
+        width: "100%",
+        height: 80,
+        borderWidth: 0,
+        borderRadius: 14,
+        backgroundColor: "white"
+    },
+    videoThumbnail: {
+        width: "100%",
+        height: "100%",
+        objectFit: "contain"
+    },
+    iconContainer: {
+        padding: 6,
+        backgroundColor: "black",
+        borderWidth: 0,
+        borderRadius: 50,
+        width: 36,
+        height: 36,
+        position: 'absolute',
+        top: 40,
+        right: "40%",
+        justifyContent: "center",
+        zIndex: 1,
+        opacity: 0.7
+    },
+    videoTitleContainer: {
+        padding: 6,
+        backgroundColor: "white",
+        width: "100%",
+        height: 60,
+        textAlign: "left",
+    },
+    videoTitle: {
+        color: "black",
+        fontSize: 12,
+        fontWeight: "500",
+        textAlignVertical: "center"
+    },
+    videoDuration: {
+        width: 140,
+        backgroundColor: "black",
+        opacity: 0.5,
+        padding: 2,
+        position: "absolute",
+        top: 40,
+        right: "40%",
+    },
+    durationText: {
+        color: "white",
+        fontSize: 15
+    },
+
+
+
+    //////////      VIDEO SCREEN       /////////////
+    videoScreenContainer: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: style.bgColor,
+    },
+    videoFrameContainer: {
+        width: "100%",
+        height: "100%",
     }
 })
 

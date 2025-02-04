@@ -7,7 +7,7 @@ import AntDesign from "react-native-vector-icons/AntDesign"
 
 
 
-const CustomHeader = ({ navigation }) => {
+const CustomHeader = ({onPressLogout}) => {
     const [showMenuModal, setShowMenuModal] = useState(false);
 
 
@@ -24,7 +24,7 @@ const CustomHeader = ({ navigation }) => {
                 showMenuModal &&
                 <View style={styles.menuModal}>
                     {/* <View style={styles.menuModalInner}> */}
-                        <TouchableOpacity style={styles.listButton}>
+                        <TouchableOpacity style={styles.listButton} onPress={() => onPressLogout()}>
                             <MaterialIcons name={"logout"} color={"black"} size={22} />
                             <Text>Logout</Text>
                         </TouchableOpacity>

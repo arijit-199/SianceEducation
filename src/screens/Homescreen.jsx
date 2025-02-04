@@ -1,4 +1,4 @@
-import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View, FlatList, ActivityIndicator } from 'react-native'
+import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View, FlatList, ActivityIndicator, ToastAndroid } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import CustomHeader from '../components/CustomHeader';
 import styles from "./../styles/styles";
@@ -10,6 +10,8 @@ import { apiErrorHandler } from '../helper';
 import { style } from '../styles/globalStyles';
 import { BASE_URL } from '../services/apiManager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logout } from '../services/services';
+import Loader from '../components/Loader';
 
 
 
@@ -98,11 +100,31 @@ const Homescreen = ({ navigation }) => {
     }
   }
 
-  const fetchDetails = async() => {
+  const fetchDetails = async () => {
     const curuser = await AsyncStorage.getItem("currentUser");
     const token = await AsyncStorage.getItem("accessToken");
     const refresh = await AsyncStorage.getItem("refreshToken");
     console.log(curuser, token, refresh)
+  }
+
+  const handleLogout = async () => {
+    const response = await logout();
+
+    if (response.status === 200) {
+      const message = response.data.message;
+      console.log("logout message========>", message);
+
+      await AsyncStorage.removeItem("accessToken");
+      await AsyncStorage.removeItem("refreshToken");
+      await AsyncStorage.removeItem("currentUser");
+      ToastAndroid.show(message, ToastAndroid.SHORT);
+      navigation.navigate("Login");
+    } else {
+      const errMsg = apiErrorHandler(response);
+      ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+    }
+
+
   }
 
   useEffect(() => {
@@ -114,7 +136,7 @@ const Homescreen = ({ navigation }) => {
 
   return (
     <View style={styles.homeMainContainer}>
-      <CustomHeader />
+      <CustomHeader onPressLogout={() => handleLogout()} />
 
       {loading ?
         <View style={[styles.row, { marginTop: 24 }]}>
@@ -124,7 +146,7 @@ const Homescreen = ({ navigation }) => {
 
         :
 
-        <ScrollView contentContainerStyle={styles.homeInnerContainer} showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.homeInnerContainer} showsVerticalScrollIndicator={false}>
 
           <View style={styles.searchInputContainer}>
             <TextInput placeholder='Search by class' style={styles.searchInput} />
@@ -168,7 +190,7 @@ const Homescreen = ({ navigation }) => {
 
 
           {loadClasses ?
-            <View style={[style.row, {marginTop: -100}]}>
+            <View style={[style.row, { marginTop: -100 }]}>
               <ActivityIndicator size={'small'} color={style.mainColor} />
               <Text>Loading..</Text>
             </View>
@@ -176,7 +198,7 @@ const Homescreen = ({ navigation }) => {
             <View style={styles.classListContainer}>
               {
                 classList.map((board, i) => (
-                  <TouchableOpacity style={styles.classCardContainer} key={i} activeOpacity={0.2} onPress={() => navigation.navigate("Course Details", {selectedBoard: board})}>
+                  <TouchableOpacity style={styles.classCardContainer} key={i} activeOpacity={0.2} onPress={() => navigation.navigate("Course Details", { selectedBoard: board })}>
                     <View style={styles.classImageContainer}>
                       <Image source={{ uri: `http://192.168.29.215:8000/${board?.image}` }} style={styles.classImage} />
                     </View>

@@ -18,6 +18,8 @@ import { style } from "./src/styles/globalStyles";
 import CourseDetailsScreen from "./src/screens/CourseDetailsScreen";
 import Profile from "./src/screens/Profile";
 import Cart from "./src/screens/Cart";
+import StudyMaterialScreen from "./src/screens/StudyMaterialScreen";
+import VideoScreen from "./src/screens/VideoScreen";
 
 
 
@@ -35,6 +37,8 @@ function App() {
       <Stack.Navigator>
         <Stack.Screen name={"Home"} component={Homescreen} options={options} />
         <Stack.Screen name={"Course Details"} component={CourseDetailsScreen} options={options} />
+        <Stack.Screen name={"StudyMaterial"} component={StudyMaterialScreen} options={options} />
+        <Stack.Screen name="Video" component={VideoScreen} options={options} />
       </Stack.Navigator>
     )
   }
@@ -98,7 +102,7 @@ function App() {
     <NavigationContainer>
       <StatusBar barStyle={"dark-content"} backgroundColor={"white"} />
 
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName="Tab">
         <Stack.Screen name="Login" component={LoginScreen} options={options} />
         <Stack.Screen name="Otp" component={OtpScreen} options={options} />
         <Stack.Screen name="Signup" component={SignupScreen} options={options} />

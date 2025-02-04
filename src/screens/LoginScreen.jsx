@@ -8,7 +8,7 @@ import { apiErrorHandler } from '../helper';
 
 
 const LoginScreen = ({ navigation }) => {
-    const [email, setEmail] = useState(null);
+    const [email, setEmail] = useState("arijitghosh828@gmail.com");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 

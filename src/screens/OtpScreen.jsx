@@ -38,7 +38,7 @@ const OtpScreen = ({ navigation, route }) => {
     }
 
 
-    const handleVerifyOtp = async () => {
+    const handleVerifyOtp = async () => { 
         if (otp?.length < 6) return ToastAndroid.show("OTP must be 6 digits long!!", ToastAndroid.SHORT)
 
         const body = {
@@ -68,7 +68,8 @@ const OtpScreen = ({ navigation, route }) => {
                 await AsyncStorage.setItem("refreshToken", JSON.stringify(refreshToken))
                 await AsyncStorage.setItem("currentUser", JSON.stringify(currentUser))
 
-                ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+                ToastAndroid.show("Login successfull", ToastAndroid.SHORT);
+                navigation.navigate("Tab");
             }
             else {
                 const errMsg = apiErrorHandler(response);
@@ -84,7 +85,6 @@ const OtpScreen = ({ navigation, route }) => {
             setLoading(false);
         }
 
-        navigation.navigate("Tab");
     }
 
 

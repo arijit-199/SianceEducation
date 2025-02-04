@@ -2,12 +2,12 @@ import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } fr
 import React, { useEffect, useState } from 'react'
 import CustomHeader from '../components/CustomHeader';
 import styles from "./../styles/styles";
-import banner from "./../../assests/images/login_background2.jpg";
 import axios from 'axios';
 import { BASE_URL } from '../services/apiManager';
 import { apiErrorHandler } from '../helper';
 import { style } from '../styles/globalStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 const CourseDetailsScreen = ({ navigation, route }) => {
@@ -35,7 +35,7 @@ const CourseDetailsScreen = ({ navigation, route }) => {
                 setCourseList(data)
             }
         } catch (error) {
-            console.log(error);
+            console.log(error, error.message);
             const errMsg = apiErrorHandler(error);
             setError(errMsg);
         } finally {
@@ -84,43 +84,49 @@ const CourseDetailsScreen = ({ navigation, route }) => {
 
                                     <View style={styles.courseDetails}>
                                         <Text style={{ fontWeight: "400" }}>Course:  <Text style={{ fontWeight: "500" }}>{course.name}</Text></Text>
-                                        <Text style={{ fontWeight: "400" }}>Fees:   <Text style={{ fontWeight: "500" }}>₹ {course.offer_price}</Text> <Text style={{ color: "gray", textDecorationLine: 'line-through' }}>{course.mrp}</Text></Text>
+                                        <Text style={{ fontWeight: "400" }}>Price:   <Text style={{ fontWeight: "500" }}>₹ {course.offer_price}</Text> <Text style={{ color: "gray", textDecorationLine: 'line-through' }}>{course.mrp}</Text></Text>
                                         {course.course_purchase === "0" && <Text style={{ color: "red", fontWeight: "500" }}>Subscription ended</Text>}
                                     </View>
                                 </View>
 
                                 {
                                     course.course_purchase === null ?
+
                                         <View style={styles.courseBottom}>
                                             <TouchableOpacity style={styles.courseViewBtn} onPress={() => addToCart(course)}>
                                                 <Text style={styles.courseViewBtnText}>Add to Cart</Text>
                                             </TouchableOpacity>
 
-                                            <TouchableOpacity style={styles.courseBuyBtn}>
+                                            <TouchableOpacity style={styles.courseBuyBtn} onPress={() => navigation.navigate("StudyMaterial", {selectedCourse: course})}>
                                                 <Text style={styles.courseBuyBtnText}>Purcahse Course</Text>
                                             </TouchableOpacity>
                                         </View>
+
                                         : course.course_purchase === "1" ?
+
                                             <View style={styles.courseBottom}>
                                                 <TouchableOpacity style={styles.courseViewBtn}>
                                                     <Text style={styles.courseViewBtnText}>Renew</Text>
                                                 </TouchableOpacity>
 
-                                                <TouchableOpacity style={styles.courseBuyBtn}>
+                                                <TouchableOpacity style={styles.courseBuyBtn} onPress={() => navigation.navigate("StudyMaterial", {selectedCourse: course})}>
                                                     <Text style={styles.courseBuyBtnText}>Explore</Text>
                                                 </TouchableOpacity>
                                             </View>
-                                            :
-                                            course.course_purchase === "2" ?
+
+                                            : course.course_purchase === "2" ?
+
                                                 <View style={styles.courseBottom}>
                                                     <TouchableOpacity style={styles.disabledCourseViewBtn} disabled={true}>
                                                         <Text style={styles.courseViewBtnText}>Renew</Text>
                                                     </TouchableOpacity>
-                                                    <TouchableOpacity style={styles.courseBuyBtn}>
+                                                    <TouchableOpacity style={styles.courseBuyBtn} onPress={() => navigation.navigate("StudyMaterial", {selectedCourse: course})}>
                                                         <Text style={styles.courseBuyBtnText}>Explore</Text>
                                                     </TouchableOpacity>
                                                 </View>
+
                                                 :
+
                                                 <View style={styles.courseBottom}>
                                                     <TouchableOpacity style={styles.courseViewBtn}>
                                                         <Text style={styles.courseViewBtnText}>Renew</Text>
