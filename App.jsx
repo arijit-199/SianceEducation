@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { StatusBar } from "react-native";
+import { StatusBar, ToastAndroid } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
@@ -20,10 +20,16 @@ import Profile from "./src/screens/Profile";
 import Cart from "./src/screens/Cart";
 import StudyMaterialScreen from "./src/screens/StudyMaterialScreen";
 import VideoScreen from "./src/screens/VideoScreen";
+import { BASE_URL } from "./src/services/apiManager";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
+import InitialLoadingScreen from "./src/screens/InitialLoadingScreen";
 
 
 
 function App() {
+  const [isUserLoggedIn, setUserLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -56,6 +62,7 @@ function App() {
             tabBarLabel: "Home",
             tabBarIconStyle: { color: "gray" },
             tabBarActiveTintColor: style.mainColor,
+            tabBarStyle: {height: 48,},
             tabBarInactiveTintColor: "gray",
             tabBarIcon: ({ color, focused }) => (
               <AntDesign name="home" color={focused ? style.mainColor : "gray"} size={25} />
@@ -98,11 +105,42 @@ function App() {
 
 
 
+  const checkUserLoginStatus = async () => {
+    setLoading(true)
+    const accessToken = await AsyncStorage.getItem("accessToken");
+    const refreshToken = await AsyncStorage.getItem("refreshToken");
+    const currentUser = await AsyncStorage.getItem("currentUser");
+    console.log(accessToken, refreshToken, currentUser);
+
+    if (accessToken && refreshToken && currentUser) {
+      setUserLoggedIn(true)
+      setLoading(false)
+    }
+    else {
+      setUserLoggedIn(false)
+      setLoading(false)
+    }
+  }
+
+
+  useEffect(() => {
+    checkUserLoginStatus()
+  }, [])
+
+
+  if (loading) {
+    return <InitialLoadingScreen />
+  }
+
+
+
+
+
   return (
     <NavigationContainer>
       <StatusBar barStyle={"dark-content"} backgroundColor={"white"} />
 
-      <Stack.Navigator initialRouteName="Tab">
+      <Stack.Navigator initialRouteName={"Login"}>
         <Stack.Screen name="Login" component={LoginScreen} options={options} />
         <Stack.Screen name="Otp" component={OtpScreen} options={options} />
         <Stack.Screen name="Signup" component={SignupScreen} options={options} />

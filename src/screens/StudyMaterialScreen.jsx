@@ -17,11 +17,7 @@ const StudyMaterialScreen = ({ route, navigation }) => {
   const [videoList, setVideoList] = useState([]);
   const [error, setError] = useState(null);
 
-  const arr = [1, 2, 3, 4, 5]
-
   const { selectedCourse } = route.params;
-
-  console.log("selectedCourse====>", selectedCourse);
 
 
   const fetchVideoList = async () => {
@@ -50,6 +46,22 @@ const StudyMaterialScreen = ({ route, navigation }) => {
     }
   }
 
+  const convertDuration = (duration) => {
+    const minutes = Math.floor(parseInt(duration) / 60);
+    const seconds = parseInt(duration) % 60;
+
+    if (minutes > 60) {
+      const hours = Math.floor(minutes / 60);
+      const minutes = Math.floor(minutes % 60);
+
+      return `${hours < 10 ? `0${hours.toString()}` : hours.toString()}:${minutes < 10 ? `0${minutes.toString()}` : minutes.toString()}:${seconds < 10 ? `0${seconds.toString()}` : seconds.toString()}`
+    }
+    else {
+      return `${minutes < 10 ? `0${minutes.toString()}` : minutes.toString()}:${seconds < 10 ? `0${seconds.toString()}` : seconds.toString()}`
+    }
+
+  }
+
   useEffect(() => {
     fetchVideoList()
   }, [])
@@ -61,26 +73,26 @@ const StudyMaterialScreen = ({ route, navigation }) => {
 
       {
         loading ?
-          <View style={[styles.row, {alignItems: "center", width: "100%", justifyContent: "100%"}]}>
+          <View style={[styles.row, { alignItems: "center", width: "100%", justifyContent: "100%" }]}>
             <ActivityIndicator size={"small"} color={style.mainColor} />
             <Text>Loading..</Text>
           </View>
           :
           <ScrollView contentContainerStyle={styles.videoListContainer}>
-            {            
+            {
               videoList.map((video, i) => (
-                <TouchableOpacity style={styles.singleVideoCard} key={i} onPress={() => navigation.navigate("Video", {video: video})}>
+                <TouchableOpacity style={styles.singleVideoCard} key={i} onPress={() => navigation.navigate("Video", { video: video, videoList: videoList })}>
                   <View style={styles.iconContainer}>
                     <Entypo name={"controller-play"} size={24} color={"white"} />
                   </View>
                   <View style={styles.videoDuration}>
-                    <Text style={styles.durationText}>{video.duration}</Text>
+                    <Text style={styles.durationText}>{convertDuration(video.duration)}</Text>
                   </View>
                   <View style={styles.videoThumbnailContainer}>
-                    <Image source={{uri: `http://192.168.29.215:8000/${video.thumbnail}`}} style={styles.videoThumbnail} />
+                    <Image source={{ uri: `http://192.168.29.213:8000/${video.thumbnail}` }} style={styles.videoThumbnail} />
                   </View>
                   <View style={styles.videoTitleContainer}>
-                    <Text style={styles.videoTitle}>{video.description}</Text>
+                    <Text style={styles.videoTitle}  numberOfLines={1} ellipsizeMode="tail" >{video.description}</Text>
                   </View>
                 </TouchableOpacity>
               ))

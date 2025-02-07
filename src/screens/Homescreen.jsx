@@ -12,6 +12,7 @@ import { BASE_URL } from '../services/apiManager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logout } from '../services/services';
 import Loader from '../components/Loader';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
@@ -39,7 +40,7 @@ const Homescreen = ({ navigation }) => {
       setLoading(true);
       setError(null);
 
-      const response = await axios.get(`http://192.168.29.215:8000/api/board-list/`);
+      const response = await axios.get(`${BASE_URL}/board-list/`);
       // console.log("response===>", response.data);
 
       if (response.status === 200) {
@@ -63,15 +64,15 @@ const Homescreen = ({ navigation }) => {
       setLoadClasses(true);
       setError(null);
 
-      const response = await axios.get(`http://192.168.29.215:8000/api/class-list/`);
-      console.log("classList=======>", response.data);
+      const response = await axios.get(`${BASE_URL}/class-list/`);
+      // console.log("classList=======>", response.data);
 
       if (response.status === 200) {
         const data = response.data;
         setClassList(data);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       const errMsg = apiErrorHandler(error);
       setError(errMsg);
     } finally {
@@ -92,7 +93,7 @@ const Homescreen = ({ navigation }) => {
         setClassList(response.data);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       const errMsg = apiErrorHandler(error);
       setError(errMsg);
     } finally {
@@ -100,19 +101,14 @@ const Homescreen = ({ navigation }) => {
     }
   }
 
-  const fetchDetails = async () => {
-    const curuser = await AsyncStorage.getItem("currentUser");
-    const token = await AsyncStorage.getItem("accessToken");
-    const refresh = await AsyncStorage.getItem("refreshToken");
-    console.log(curuser, token, refresh)
-  }
+  // console.log("boardList====>", boardList)
 
   const handleLogout = async () => {
     const response = await logout();
 
     if (response.status === 200) {
       const message = response.data.message;
-      console.log("logout message========>", message);
+      // console.log("logout message========>", message);
 
       await AsyncStorage.removeItem("accessToken");
       await AsyncStorage.removeItem("refreshToken");
@@ -130,7 +126,6 @@ const Homescreen = ({ navigation }) => {
   useEffect(() => {
     fetchBoards()
     fetchAllClassList()
-    fetchDetails()
   }, [])
 
 
@@ -146,7 +141,7 @@ const Homescreen = ({ navigation }) => {
 
         :
 
-        <ScrollView style={styles.homeInnerContainer} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={styles.homeInnerContainer} showsVerticalScrollIndicator={false}>
 
           <View style={styles.searchInputContainer}>
             <TextInput placeholder='Search by class' style={styles.searchInput} />
@@ -190,7 +185,7 @@ const Homescreen = ({ navigation }) => {
 
 
           {loadClasses ?
-            <View style={[style.row, { marginTop: -100 }]}>
+            <View style={style.row}>
               <ActivityIndicator size={'small'} color={style.mainColor} />
               <Text>Loading..</Text>
             </View>

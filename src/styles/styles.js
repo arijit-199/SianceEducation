@@ -1,6 +1,9 @@
 import { Dimensions, StyleSheet } from "react-native";
 import { style } from "./globalStyles";
 
+const premiumModalWidth = Dimensions.get('window').width * 0.90
+const premiumModalHeight = Dimensions.get('window').height * 0.4
+
 const styles = StyleSheet.create({
     ///////////   LOGIN   ///////////
     loginContainer: {
@@ -237,16 +240,15 @@ const styles = StyleSheet.create({
     },
     homeInnerContainer: {
         width: "100%",
-        height: "100%",
         padding: 12,
         paddingVertical: 8,
         backgroundColor: style.bgColor,
         flexGrow: 1,
-        paddingBottom: 75,
+        paddingBottom: 12,
         display: "flex",
         flexDirection: "column",
+        alignItems: "center",
         gap: 12,
-        marginBottom: 50
     },
     searchInputContainer: {
         marginBottom: 6,
@@ -276,13 +278,12 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     swiperContainer: {
-        marginBottom: 10,
         width: "100%",
-        height: 180,
+        height: 160,
         borderRadius: 12,
         borderWidth: 0,
         overflow: "hidden",
-
+        backgroundColor: "transparent",
     },
     slide: {
         width: "100%",
@@ -297,7 +298,6 @@ const styles = StyleSheet.create({
     },
     paginationStyle: {
         height: 10,
-        bottom: '1%',
     },
     dotStyle: {
         width: 8,
@@ -332,7 +332,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 8,
         height: 50,
-        backgroundColor: "transparent"
+        backgroundColor: "transparent",
+        // marginBottom: 50
     },
     boardItemContainer: {
         padding: 12,
@@ -372,13 +373,14 @@ const styles = StyleSheet.create({
     },
     classListContainer: {
         width: "100%",
-        height: "100%",
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
         alignItems: "flex-start",
         justifyContent: "flex-start",
-        gap: 12
+        gap: 12,
+        backgroundColor: "transparent",
+        paddingBottom: 70
     },
     classCardContainer: {
         padding: 6,
@@ -535,19 +537,21 @@ const styles = StyleSheet.create({
     },
     profileInnerContainer: {
         width: "100%",
-        height: "100%",
         alignItems: "center",
         gap: 12,
+        flexGrow: 1,
+        paddingBottom: 50
     },
     profileTop: {
         width: "100%",
-        height: "35%",
+        height: "40%",
         display: "flex",
         flexDirection: "column",
         gap: "4%",
         alignItems: "center",
     },
     profilePictureContainer: {
+        marginTop: 14,
         width: "100%",
         height: "60%",
         alignItems: "center",
@@ -576,13 +580,31 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         borderRadius: 50,
         position: "absolute",
-        bottom: 12,
-        right: 0
+        top: 60,
+        left: 90
     },
     uploadPictureBtnText: {
         color: "white",
         textAlign: 'center',
         fontWeight: "500",
+        fontSize: 14,
+    },
+    addAddressBtn: {
+        marginVertical: -8,
+        padding: 8,
+        display: 'flex',
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: "center",
+        gap: 6,
+        backgroundColor: "white",
+        borderColor: style.mainColor,
+        borderWidth: 1.5,
+        borderRadius: 6,
+        width: "42%"
+    },
+    addAddressBtnText: {
+        color: style.mainColor,
         fontSize: 14,
     },
     profileBottom: {
@@ -681,6 +703,39 @@ const styles = StyleSheet.create({
         color: "black",
         fontSize: 18,
     },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    modalContent: {
+        width: premiumModalWidth,
+        height: premiumModalHeight,
+        padding: 20,
+        paddingBottom: 20,
+        backgroundColor: "white",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderRadius: 10,
+    },
+    successImage:{
+        width: 140,
+        height: 140,
+        objectFit: "cover",
+    },
+    successMessage: {
+        color: 'green',
+        fontSize: 16
+    },
+    modalText: {
+        fontSize: 15,
+        marginBottom: 20,
+        fontWeight: "500",
+        color: style.mainColor
+    },
     cartListContainer: {
         gap: 12,
         flexGrow: 1,
@@ -710,8 +765,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     itemImageContainer: {
-        width: 80,
-        height: 80,
+        width: 60,
+        height: 60,
         borderWidth: 0,
         borderRadius: 12,
         overflow: "hidden",
@@ -789,15 +844,31 @@ const styles = StyleSheet.create({
         opacity: 0.3
     },
 
+    emptyCartImageContainer: {
+        width: "100%",
+        height: "100%",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    emptyCartImage: {
+        width: 140,
+        height: 140,
+        objectFit: "contain",
+    },
+    cartEmptyText: {
+        textAlign: "center",
+        color: "gray"
+    },
+
 
 
     ///////////       STUDY MATERIAL        /////////////////// 
-    studyMaterialContainer: { 
-       margin: 0,
-       padding: 0,
-       backgroundColor: style.bgColor,
-       width: "100%",
-       height: "100%"
+    studyMaterialContainer: {
+        margin: 0,
+        padding: 0,
+        backgroundColor: style.bgColor,
+        width: "100%",
+        height: "100%"
     },
     videoListContainer: {
         margin: 0,
@@ -835,8 +906,9 @@ const styles = StyleSheet.create({
         width: "100%",
         height: 80,
         borderWidth: 0,
-        borderRadius: 14,
-        backgroundColor: "white"
+        borderRadius: 12,
+        backgroundColor: "white",
+        overflow: "hidden"
     },
     videoThumbnail: {
         width: "100%",
@@ -851,7 +923,7 @@ const styles = StyleSheet.create({
         width: 36,
         height: 36,
         position: 'absolute',
-        top: 40,
+        top: 30,
         right: "40%",
         justifyContent: "center",
         zIndex: 1,
@@ -871,17 +943,17 @@ const styles = StyleSheet.create({
         textAlignVertical: "center"
     },
     videoDuration: {
-        width: 140,
+        paddingHorizontal: 4,
         backgroundColor: "black",
-        opacity: 0.5,
-        padding: 2,
         position: "absolute",
-        top: 40,
-        right: "40%",
+        bottom: 60,
+        right: "8%",
+        zIndex: 1
     },
     durationText: {
         color: "white",
-        fontSize: 15
+        fontSize: 10,
+        textAlign: "center"
     },
 
 
@@ -889,12 +961,26 @@ const styles = StyleSheet.create({
     //////////      VIDEO SCREEN       /////////////
     videoScreenContainer: {
         width: "100%",
-        height: "100%",
-        backgroundColor: style.bgColor,
+        // height: "100%",
+        backgroundColor: "white",
+        flexGrow: 1
     },
     videoFrameContainer: {
         width: "100%",
-        height: "100%",
+        backgroundColor: "gray"
+    },
+    videoDetailsContainer: {
+        padding: 14,
+    },
+    videoName: {
+        color: "black",
+        fontSize: 14,
+        fontWeight: "500"
+    },
+    divider: {
+        width: "100%",
+        height: 1,
+        backgroundColor: "#dadada"
     }
 })
 
