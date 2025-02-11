@@ -1,14 +1,19 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { BackHandler, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react';
 import logo from "./../../assests/images/app_logo.jpg";
 import Entypo from "react-native-vector-icons/Entypo"
-import MaterialIcons from "react-native-vector-icons/MaterialIcons"
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AntDesign from "react-native-vector-icons/AntDesign"
 
 
 
-const CustomHeader = ({onPressLogout}) => {
+const CustomHeader = ({ onPressLogout }) => {
     const [showMenuModal, setShowMenuModal] = useState(false);
+
+    const handleExit = () => {
+        BackHandler.exitApp();
+    };
 
 
     return (
@@ -24,15 +29,25 @@ const CustomHeader = ({onPressLogout}) => {
                 showMenuModal &&
                 <View style={styles.menuModal}>
                     {/* <View style={styles.menuModalInner}> */}
-                        <TouchableOpacity style={styles.listButton} onPress={() => onPressLogout()}>
-                            <MaterialIcons name={"logout"} color={"black"} size={22} />
-                            <Text>Logout</Text>
-                        </TouchableOpacity>
+                    <TouchableOpacity style={styles.listButton} onPress={onPressLogout}>
+                        <MaterialIcons name={"logout"} color={"black"} size={22} />
+                        <Text>Logout</Text>
+                    </TouchableOpacity>
                     {/* </View> */}
 
-                    <TouchableOpacity style={styles.listButton}>
+                    <TouchableOpacity style={styles.listButton} onPress={() => handleExit()}>
                         <AntDesign name={"close"} color={"black"} size={22} />
                         <Text>Close App</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.listButton}>
+                        <MaterialIcons name={"list-alt"} color={"black"} size={22} />
+                        <Text>Terms & Conditions</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.listButton}>
+                        <MaterialCommunityIcons name={"shield-alert-outline"} color={"black"} size={22} />
+                        <Text>Privacy Policy</Text>
                     </TouchableOpacity>
                 </View>
             }
@@ -74,15 +89,16 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     menuModal: {
-        padding: 18,
+        paddingVertical: 16,
+        paddingHorizontal: 12,
         backgroundColor: "white",
         borderWidth: 0,
         borderRadius: 12,
-        width: "50%",
-        height: 100,
+        width: "60%",
+        height: 175,
         position: "absolute",
         top: 48,
-        right: 16,
+        right: 12,
         zIndex: 1,
         shadowColor: "black",
         shadowOffset: { width: 8, height: -2 },
@@ -92,13 +108,12 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "flex-start",
         gap: 16
-        // justifyContent: "space-between",
     },
     listButton: {
         display: "flex",
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12
+        gap: 6
     },
     menuModalInner: {
         paddingTop: 6,

@@ -1,5 +1,6 @@
 import { Dimensions, StyleSheet } from "react-native";
 import { style } from "./globalStyles";
+import jestConfig from "../../jest.config";
 
 const premiumModalWidth = Dimensions.get('window').width * 0.90
 const premiumModalHeight = Dimensions.get('window').height * 0.4
@@ -427,6 +428,7 @@ const styles = StyleSheet.create({
         width: "100%",
         minHeight: "100%",
         backgroundColor: style.bgColor,
+        position: "relative"
     },
     courseHeading: {
         paddingTop: 6,
@@ -697,6 +699,13 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "89.5%",
     },
+    cartHeader: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: "94%",
+    },
     cartHeading: {
         padding: 18,
         paddingHorizontal: 24,
@@ -721,7 +730,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         borderRadius: 10,
     },
-    successImage:{
+    successImage: {
         width: 140,
         height: 140,
         objectFit: "cover",
@@ -981,7 +990,219 @@ const styles = StyleSheet.create({
         width: "100%",
         height: 1,
         backgroundColor: "#dadada"
+    },
+
+
+    //////////////        PURCHASE COURSE      //////////////////////
+    purchasedCoursesContainer: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: "white",
+        alignItems: 'center',
+        justifyContent: "center"
+    },
+    purchasedCoursesInner: {
+        padding: 12,
+        width: '80%',
+        flexGrow: 1,
+        gap: 10
+    },
+
+
+    /////////////    WALLET    //////////////
+    walletScreenContainer: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: style.bgColor,
+    },
+    walletPageInner: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: "white",
+    },
+    walletTop: {
+        paddingTop: 14,
+        width: "100%",
+        height: 200,
+        backgroundColor: style.mainColor,
+        borderWidth: 0,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+        alignItems: "center",
+    },
+    walletHeading: {
+        color: "white",
+        fontSize: 19,
+        fontWeight: "500",
+        textAlign: "center",
+        letterSpacing: 0.6
+    },
+    profileImageContainer: {
+        marginTop: 12,
+        marginBottom: 6,
+        width: 60,
+        height: 60,
+        borderRadius: 50,
+        borderWidth: 0,
+        overflow: "hidden",
+        backgroundColor: "white",
+    },
+    profileImage: {
+        width: "100%",
+        height: "100%",
+        objectFit: 'contain'
+    },
+    normalText: {
+        color: "white",
+        fontSize: 12,
+        marginBottom: 2,
+        letterSpacing: 0.4,
+        fontWeight: "400",
+        textAlign: "center"
+    },
+    walletBottom: {
+        padding: 24,
+        width: "100%",
+        height: Dimensions.get('window').height - 300,
+        alignItems: 'center',
+        justifyContent: "space-between",
+    },
+    walletIcon: {
+        width: 120,
+        height: 120,
+        objectFit: "contain",
+    },
+    creditHead: {
+        color: '#535353',
+        fontSize: 14,
+        textAlign: "center",
+        letterSpacing: 0.6,
+        marginVertical: 12
+    },
+    amount: {
+        color: style.mainColor,
+        fontSize: 42,
+        fontWeight: '700',
+        letterSpacing: 0.4,
+        textAlign: "center"
+    },
+    withdrawButton: {
+        width: "100%",
+        padding: 12,
+        backgroundColor: style.mainColor,
+        borderWidth: 0,
+        borderRadius: 12,
+    },
+    withdrawButtonText: {
+        color: "white",
+        fontSize: 14,
+        letterSpacing: 0.4,
+        fontWeight: "500",
+        textAlign: 'center'
+    },
+
+
+
+    ///////////     CHECKOUT PAGE     //////////
+    checkoutPageContainer: {
+        width: '100%',
+        height: "100%",
+        backgroundColor: "#eee"
+    },
+    checkoutPageInner: {
+       display: "flex",
+       flexDirection: "column",
+       alignItems: "center",
+       justifyContent: "space-between",
+       height: "93%",
+    },
+    checkoutPageScrollView: {
+        backgroundColor: "#eee",
+        flexGrow: 1,
+        paddingBottom: 12,
+    },
+    userDetails: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 18,
+        paddingTop: 8,
+        paddingBottom: 10,
+        width: Dimensions.get('window').width,
+        backgroundColor: "white",
+    },
+    checkoutPageHeader: {
+        padding: 12,
+        paddingHorizontal: 14,
+        width: "100%",
+        backgroundColor: "white",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: 'center',
+        gap: 14
+    },
+    headerTitle: {
+        color: 'black',
+        fontSize: 18,
+    },
+    smBorderBtn: {
+        display: "flex",
+        flexDirection: 'row',
+        alignItems: "center",
+        gap: 6,
+        padding: 8,
+        borderWidth: 1.5,
+        borderColor: style.mainColor,
+        borderRadius: 6,
+        width: 100,
+    },
+    smBorderBtnText: {
+        color: style.mainColor,
+        fontSize: 13,
+        fontWeight: "500",
+        letterSpacing: 0.6
+    },
+    purchaseDetails: {
+        marginTop: 10,
+        width: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+        backgroundColor: "transparent"
+    },
+    itemCardContainer: {
+        padding: 12,
+        width: "100%",
+        backgroundColor: "white",
+    },
+    walletPointsContainer: {
+        marginTop: 10,
+        backgroundColor: "white",
+        width: "100%",
+        padding: 12,
+    },
+    walletBadge: {
+        margin: 8,
+        width: 60,
+        backgroundColor: style.mainColor,
+        borderWidth: 0,
+        borderRadius: 12,
+    },
+    billingDetailsSections: {
+        backgroundColor: "white",
+        width: "75%",
+        padding: 12,
+        marginTop: 12,
+    },
+    checkoutPageFooter: {
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        width: "100%",
+        display: 'flex',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        backgroundColor: style.bgColor
     }
 })
-
 export default styles

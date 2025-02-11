@@ -1,10 +1,11 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { StatusBar, ToastAndroid } from "react-native";
+import { StatusBar, ToastAndroid, View } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
+import Octicons from "react-native-vector-icons/Octicons";
+
 
 
 
@@ -24,6 +25,9 @@ import { BASE_URL } from "./src/services/apiManager";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import InitialLoadingScreen from "./src/screens/InitialLoadingScreen";
+import PurchasedCourse from "./src/screens/PurchasedCourse";
+import Wallet from "./src/screens/Wallet";
+import CheckoutPage from "./src/screens/CheckoutPage";
 
 
 
@@ -53,22 +57,7 @@ function App() {
 
   function TabScreen() {
     return (
-      <Tab.Navigator>
-        <Tab.Screen
-          name={"Homestack"}
-          component={HomeStack}
-          options={{
-            headerShown: false,
-            tabBarLabel: "Home",
-            tabBarIconStyle: { color: "gray" },
-            tabBarActiveTintColor: style.mainColor,
-            tabBarStyle: {height: 48,},
-            tabBarInactiveTintColor: "gray",
-            tabBarIcon: ({ color, focused }) => (
-              <AntDesign name="home" color={focused ? style.mainColor : "gray"} size={25} />
-            )
-          }} />
-
+      <Tab.Navigator initialRouteName="Homestack">
         <Tab.Screen
           name={"Profile"}
           component={Profile}
@@ -85,6 +74,51 @@ function App() {
           }} />
 
         <Tab.Screen
+          name={"PurchasedCourse"}
+          component={PurchasedCourse}
+          options={{
+            headerShown: false,
+            tabBarLabel: "Purchases",
+            // tabBarItemStyle: {margin},
+            tabBarIconStyle: { color: "gray" },
+            tabBarActiveTintColor: style.mainColor,
+            tabBarInactiveTintColor: "gray",
+            tabBarIcon: ({ color, focused }) => (
+              <Octicons name="checklist" color={focused ? style.mainColor : "gray"} size={22} />
+            )
+          }} />
+
+        <Tab.Screen
+          name={"Homestack"}
+          component={HomeStack}
+          options={{
+            headerShown: false,
+            tabBarLabel: "Home",
+            tabBarIconStyle: { color: "gray" },
+            tabBarActiveTintColor: style.mainColor,
+            // tabBarStyle: { height: 48, },
+            tabBarInactiveTintColor: "gray",
+            tabBarIcon: ({ color, focused }) => (
+              <AntDesign name="home" color={focused ? style.mainColor : "gray"} size={24} />
+            )
+          }} />
+
+        <Tab.Screen
+          name={"Wallet"}
+          component={Wallet}
+          options={{
+            headerShown: false,
+            tabBarLabel: "Wallet",
+            // tabBarItemStyle: {margin},
+            tabBarIconStyle: { color: "gray" },
+            tabBarActiveTintColor: style.mainColor,
+            tabBarInactiveTintColor: "gray",
+            tabBarIcon: ({ color, focused }) => (
+              <AntDesign name="wallet" color={focused ? style.mainColor : "gray"} size={24} />
+            )
+          }} />
+
+        <Tab.Screen
           name={"Cart"}
           component={Cart}
           options={{
@@ -95,7 +129,7 @@ function App() {
             tabBarActiveTintColor: style.mainColor,
             tabBarInactiveTintColor: "gray",
             tabBarIcon: ({ color, focused }) => (
-              <Feather name="shopping-cart" color={focused ? style.mainColor : "gray"} size={28} />
+              <AntDesign name="shoppingcart" color={focused ? style.mainColor : "gray"} size={28} />
             )
           }} />
       </Tab.Navigator>
@@ -110,7 +144,7 @@ function App() {
     const accessToken = await AsyncStorage.getItem("accessToken");
     const refreshToken = await AsyncStorage.getItem("refreshToken");
     const currentUser = await AsyncStorage.getItem("currentUser");
-    console.log(accessToken, refreshToken, currentUser);
+    // console.log(accessToken, refreshToken, currentUser);
 
     if (accessToken && refreshToken && currentUser) {
       setUserLoggedIn(true)
@@ -140,12 +174,13 @@ function App() {
     <NavigationContainer>
       <StatusBar barStyle={"dark-content"} backgroundColor={"white"} />
 
-      <Stack.Navigator initialRouteName={"Login"}>
+      <Stack.Navigator initialRouteName={isUserLoggedIn ? "Tab" : "Login"}>
         <Stack.Screen name="Login" component={LoginScreen} options={options} />
         <Stack.Screen name="Otp" component={OtpScreen} options={options} />
         <Stack.Screen name="Signup" component={SignupScreen} options={options} />
         <Stack.Screen name="SignupOtp" component={SignupOtp} options={options} />
         <Stack.Screen name="Tab" component={TabScreen} options={options} />
+        <Stack.Screen name="Checkout" component={CheckoutPage} options={options} />
       </Stack.Navigator>
     </NavigationContainer>
   )

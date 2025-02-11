@@ -1,5 +1,5 @@
 import { ActivityIndicator, Image, ScrollView, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styles from "./../styles/styles";
 import CustomHeader from '../components/CustomHeader';
 import banner from "./../../assests/images/login_background2.jpg";
@@ -16,11 +16,12 @@ import axios from 'axios';
 import { BASE_URL } from '../services/apiManager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { style } from '../styles/globalStyles';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 
 
-const Profile = () => {
+const Profile = ({ navigation, route }) => {
   const [editName, setEditName] = useState(false);
   const [editMobile, setEditMobile] = useState(false);
   const [editDob, setEditDob] = useState(false);
@@ -38,7 +39,6 @@ const Profile = () => {
   const [date, setDate] = useState(new Date());
   const [profilePcture, setProfilepicture] = useState(null);
   const [imageUri, setImageUri] = useState(null);
-
 
   const formatDate = (selectedDate) => {
     const today = new Date(selectedDate);
@@ -58,10 +58,10 @@ const Profile = () => {
 
       setImageUri(res[0].uri); // Get the image URI
       setProfilePhoto(res[0].name);
-      console.log("Selected Image:", res[0]);
+      // console.log("Selected Image:", res[0]);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
-        console.log("User canceled the picker");
+        // console.log("User canceled the picker");
       } else {
         console.error("Error picking image:", err);
       }
@@ -75,7 +75,7 @@ const Profile = () => {
       const refreshToken = JSON.parse(await AsyncStorage.getItem("refreshToken"));
 
       const response = await axios.get(`${BASE_URL}/customer/profile/get-details/?refresh_token=${refreshToken}`);
-      console.log("get profile response====>", response.data);
+      // console.log("get profile response====>", response.data);
 
       if (response.status === 200) {
         const { full_name, dob, email, mobile, address, profile_photo } = response.data;
@@ -101,7 +101,7 @@ const Profile = () => {
   }
 
   const handleUpdateProfileDetails = async () => {
-    console.log("profilePhoto===>", profilePhoto);
+    // console.log("profilePhoto===>", profilePhoto);
     try {
       setLoading(true);
       setError(null);
@@ -121,6 +121,7 @@ const Profile = () => {
       }
 
       const response = await axios.post(`${BASE_URL}/customer/profile/update-details/?refresh_token=${refreshToken}`, body);
+      console.log(response.data)
 
       if (response.status === 200) {
         ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
@@ -192,9 +193,11 @@ const Profile = () => {
 
 
 
-  useEffect(() => {
-    fetchUserDetails()
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserDetails()
+    }, [])
+  )
 
 
   return (
@@ -202,9 +205,9 @@ const Profile = () => {
       <CustomHeader />
 
       {loading ?
-        <View>
-          <ActivityIndicator size={'small'} color={style.mainColor} />
-          <Text>Loading..</Text>
+        <View style={{ width: "100%", height: "100%", alignItems: "center", justifyContent: 'center' }}>
+          <ActivityIndicator size={'large'} color={style.mainColor} />
+          <Text style={{ marginTop: 12 }}>Loading..</Text>
         </View>
         :
         <ScrollView contentContainerStyle={styles.profileInnerContainer} showsVerticalScrollIndicator={false}>

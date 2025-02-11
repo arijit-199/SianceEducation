@@ -1,4 +1,4 @@
-import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View, FlatList, ActivityIndicator, ToastAndroid } from 'react-native'
+import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View, ActivityIndicator, ToastAndroid } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import CustomHeader from '../components/CustomHeader';
 import styles from "./../styles/styles";
@@ -17,18 +17,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const Homescreen = ({ navigation }) => {
-  const arr = [1, 2, 3, 4, 5, 6]
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [boardList, setBoardList] = useState([]);
   const [classList, setClassList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadClasses, setLoadClasses] = useState(false);
   const [error, setError] = useState(null);
-  const [pageReady, setPageReady] = useState(false);
 
   const swiperRef = useRef(null);
-
-  const { width } = Dimensions.get("window");
 
   const images = [
     banner, banner, banner
@@ -65,7 +61,7 @@ const Homescreen = ({ navigation }) => {
       setError(null);
 
       const response = await axios.get(`${BASE_URL}/class-list/`);
-      // console.log("classList=======>", response.data);
+      // console.log("Class List=======>", response.data);
 
       if (response.status === 200) {
         const data = response.data;

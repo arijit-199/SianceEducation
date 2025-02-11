@@ -52,7 +52,7 @@ const OtpScreen = ({ navigation, route }) => {
             setError(null);
 
             const response = await axios.post(`${BASE_URL}/login/verify-otp/`, body);
-            console.log(response.data);
+            console.log("response===>", response.data)
 
             if (response.status === 200) {
                 const accessToken = response.data.access;
@@ -62,6 +62,7 @@ const OtpScreen = ({ navigation, route }) => {
                     dob: response.data.dob,
                     email: response.data.email,
                     mobile: response.data.mobile,
+                    profile_photo: response.data.profile_photo
                 }
 
                 await AsyncStorage.setItem("accessToken", JSON.stringify(accessToken))

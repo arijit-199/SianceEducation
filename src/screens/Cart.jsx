@@ -1,7 +1,8 @@
-import { ActivityIndicator, Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View, RefreshControl } from 'react-native'
 import React, { useState } from 'react';
 import styles from "./../styles/styles";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { apiErrorHandler } from '../helper';
 import axios from 'axios';
@@ -12,8 +13,7 @@ import emptyCart from "./../../assests/images/empty_cart.webp";
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import RazorpayCheckout from "react-native-razorpay";
-
-
+import Loader from '../components/Loader';
 
 
 
@@ -22,6 +22,16 @@ const Cart = ({ route, navigation }) => {
     const [cartItems, setCartItems] = useState([]);
     const [totalCartPrice, setTotalCartPrice] = useState(null);
     const [error, setError] = useState(null);
+    const [refreshing, setRefreshing] = useState(false);
+    const [showLoader, setShowLoader] = useState(false);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchCartItems()
+        setTimeout(() => {
+          setRefreshing(false);
+        }, 2000); // Simulating network request
+      };
 
 
     const fetchCartItems = async () => {
@@ -31,7 +41,7 @@ const Cart = ({ route, navigation }) => {
 
             const refreshToken = JSON.parse(await AsyncStorage.getItem("refreshToken"));
             const response = await axios.get(`${BASE_URL}/cart/?refresh_token=${refreshToken}`);
-            console.log("get cart response========>", response.data);
+            // console.log("get cart response========>", response.data);
 
             if (response.status === 200) {
                 const data = response.data.cart_items;
@@ -43,7 +53,7 @@ const Cart = ({ route, navigation }) => {
                 ToastAndroid.show(message, ToastAndroid.SHORT);
             }
         } catch (error) {
-            console.log("get cart error===>", error);
+            // console.log("get cart error===>", error);
             const errMsg = apiErrorHandler(error);
             ToastAndroid.show(errMsg, ToastAndroid.SHORT);
         } finally {
@@ -53,27 +63,27 @@ const Cart = ({ route, navigation }) => {
 
 
     const removeFromCart = async (id) => {
-        console.log(id);
+        // console.log(id);
         try {
             setLoading(true)
             setError(null);
 
             const refreshToken = JSON.parse(await AsyncStorage.getItem("refreshToken"));
-            console.log(refreshToken)
 
             const response = await axios.delete(`${BASE_URL}/cart/remove/?refresh_token=${refreshToken}&&course_id=${id}`);
             // console.log("remove response====>", response)
 
             if (response.status === 200) {
                 const message = response.data.message;
-                ToastAndroid.show('Item removed from cart', ToastAndroid.SHORT);
+                ToastAndroid.show('Course removed from cart', ToastAndroid.SHORT);
+                onRefresh()
             } else {
                 const errMsg = apiErrorHandler(response);
                 ToastAndroid.show(errMsg, ToastAndroid.SHORT);
             }
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             const errMsg = apiErrorHandler(error);
             ToastAndroid.show(errMsg, ToastAndroid.SHORT);
         } finally {
@@ -86,6 +96,7 @@ const Cart = ({ route, navigation }) => {
     let razorpayKeySecret = 'wgSa6OjnRLwQLcby6jhy7EMu';
 
     const handlePayment = async (id) => {
+        setShowLoader(true);
         let course_ids = [];
         if (id) {
             course_ids.push(id);
@@ -126,6 +137,7 @@ const Cart = ({ route, navigation }) => {
                 order_id: orderId
             };
             // console.log('options', options);
+            setShowLoader(false);
 
             RazorpayCheckout.open(options)
                 .then(async data => {
@@ -160,11 +172,10 @@ const Cart = ({ route, navigation }) => {
         } catch (error) {
             console.error('Payment error:', error.message);
             ToastAndroid.show('Payment failed', ToastAndroid.SHORT);
+        } finally {
+            setShowLoader(false);
         }
     };
-
-
-    console.log("cartItems===>", cartItems)
 
 
 
@@ -184,20 +195,23 @@ const Cart = ({ route, navigation }) => {
     return (
         <View style={styles.cartScreenContainer} key={navigation.isFocused() ? Date.now() : "static-key"}>
             <View style={styles.cartScreenInner}>
-                <Text style={styles.cartHeading}>My Cart</Text>
+                <View style={styles.cartHeader}>
+                    <Text style={styles.cartHeading}>My Cart</Text>
+                    <MaterialIcons name={"refresh"} size={28} color={"black"} onPress={onRefresh} />
+                </View>
                 {loading ?
 
                     <ActivityIndicator size={"small"} color={style.mainColor} />
 
                     :
-                    <ScrollView contentContainerStyle={styles.cartListContainer}>
+                    <ScrollView contentContainerStyle={styles.cartListContainer} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
                         {cartItems?.length ?
 
                             cartItems.map((item, i) => (
                                 <View style={styles.cartItemContainer} key={i}>
                                     <View style={styles.cartTop}>
                                         <View style={styles.itemImageContainer}>
-                                            <Image source={{ uri: `http://192.168.29.213:8000/${item.image}` }} style={styles.itemImage} />
+                                            <Image source={{ uri: `http://192.168.29.214:8000/${item.image}` }} style={styles.itemImage} />
                                         </View>
 
                                         <View style={styles.itemDetailsContainer}>
@@ -238,6 +252,8 @@ const Cart = ({ route, navigation }) => {
                     </TouchableOpacity>
                 </View>
             }
+
+            {showLoader && <Loader />}
         </View>
     )
 }

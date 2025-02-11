@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View, RefreshControl } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import CustomHeader from '../components/CustomHeader';
 import styles from "./../styles/styles";
@@ -9,8 +9,8 @@ import { style } from '../styles/globalStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RazorpayCheckout from "react-native-razorpay";
 import { useFocusEffect } from '@react-navigation/native';
-
-
+import CustomToast from '../components/CustomToast';
+import Loader from '../components/Loader';
 
 
 
@@ -19,6 +19,7 @@ const CourseDetailsScreen = ({ navigation, route }) => {
     const [courseList, setCourseList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
     const { selectedBoard } = route.params;
 
@@ -31,7 +32,7 @@ const CourseDetailsScreen = ({ navigation, route }) => {
             const refreshToken = JSON.parse(await AsyncStorage.getItem("refreshToken"));
 
             const response = await axios.get(`${BASE_URL}/courses/?class=${selectedBoard.name}&&board=${selectedBoard.board_name}&&refresh_token=${refreshToken}`);
-            console.log("course response=============>", response.data);
+            // console.log("course response=============>", response.data);
 
             if (response.status === 200) {
                 const data = response.data;
@@ -58,8 +59,14 @@ const CourseDetailsScreen = ({ navigation, route }) => {
 
             if (response.status === 201) {
                 const message = response?.data?.message;
-                ToastAndroid.show(message, ToastAndroid.SHORT);
-                navigation.navigate("Cart", { reload: "reload" });
+                setSuccessMessage(message);
+                setShowToast(true);
+
+                let timeout;
+                timeout = setTimeout(() => {
+                    setShowToast(false);
+                }, 2000)
+                return () => clearTimeout(timeout);
             }
             else {
                 const errMsg = apiErrorHandler(response);
@@ -74,11 +81,17 @@ const CourseDetailsScreen = ({ navigation, route }) => {
         }
     }
 
-    
-    let razorpayKeyId = 'rzp_test_N00NCbB5uYXmF3';
-    let razorpayKeySecret = 'wgSa6OjnRLwQLcby6jhy7EMu';
 
-    const handlePayment = async (course) => {
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchCourses()
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000); // Simulating network request
+    };
+
+    const handleRenewCourse = async (course) => {
+        setShowPaymentLoader(true);
         let course_ids = [];
         course_ids.push(course.id);
 
@@ -112,7 +125,8 @@ const CourseDetailsScreen = ({ navigation, route }) => {
                 name: 'Course',
                 order_id: orderId
             };
-            // console.log('options', options);
+
+            setShowPaymentLoader(false)
 
             RazorpayCheckout.open(options)
                 .then(async data => {
@@ -121,17 +135,18 @@ const CourseDetailsScreen = ({ navigation, route }) => {
                         razorpay_order_id: data.razorpay_order_id,
                         razorpay_signature: data.razorpay_signature,
                     };
-                    console.log('Payment Data:', bodyData);
+                    // console.log('Payment Data:', bodyData);
 
                     const response = await axios.post(
                         `${BASE_URL}/verify_renew_payment/`, // Correct endpoint
                         bodyData,
                     );
-                    console.log("successful response=======================>", response);
+                    console.log("Payment final response=======================>", response);
 
                     if (response?.status === 200) {
                         const message = response?.data.message;
                         ToastAndroid.show(message, ToastAndroid.SHORT);
+                        onRefresh();
                     }
                     else {
                         const errMsg = apiErrorHandler(response);
@@ -141,25 +156,34 @@ const CourseDetailsScreen = ({ navigation, route }) => {
                 })
                 .catch(error => {
                     console.error('Razorpay error:', error);
-                    // ToastAndroid.show('Payment failed', ToastAndroid.SHORT);
+                    const errMsg = apiErrorHandler(error);
+                    ToastAndroid.show(errMsg, ToastAndroid.SHORT);
                 });
         } catch (error) {
             console.error('Payment error:', error.message);
-            ToastAndroid.show('Payment failed', ToastAndroid.SHORT);
+            const errMsg = apiErrorHandler(error);
+            ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+        } finally {
+            setShowPaymentLoader(false);
+            onRefresh();
         }
     };
 
+
+
+
     useFocusEffect(
-            useCallback(() => {
-                // This will run every time the screen is focused (tab switched)
-                console.log("Screen Reloaded!");
-                fetchCourses()
-    
-                // return () => {
-                //     // Cleanup if needed when leaving the screen
-                // };
-            }, [])
-        );
+        useCallback(() => {
+            // This will run every time the screen is focused (tab switched)
+            // console.log("Screen Reloaded!");
+            fetchCourses()
+
+            // return () => {
+            //     // Cleanup if needed when leaving the screen
+            // };
+        }, [])
+    );
+
 
     return (
         <View style={styles.courseDetailsScreenContainer}>
@@ -172,7 +196,7 @@ const CourseDetailsScreen = ({ navigation, route }) => {
                 </View>
                 :
 
-                <ScrollView contentContainerStyle={styles.courseListContainer} showsVerticalScrollIndicator={false}>
+                <ScrollView contentContainerStyle={styles.courseListContainer} showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
                     <Text style={styles.courseHeading}>Courses</Text>
 
                     {courseList.length > 0 ?
@@ -198,14 +222,14 @@ const CourseDetailsScreen = ({ navigation, route }) => {
                                                 <Text style={styles.courseViewBtnText}>Add to Cart</Text>
                                             </TouchableOpacity>
 
-                                            <TouchableOpacity style={styles.courseBuyBtn}>
+                                            <TouchableOpacity style={styles.courseBuyBtn} onPress={() => navigation.navigate("Checkout", { state: "purchase", course: course })}>
                                                 <Text style={styles.courseBuyBtnText}>Purcahse Course</Text>
                                             </TouchableOpacity>
                                         </View>
 
                                         : course.course_purchase === "1" ?
                                             <View style={styles.courseBottom}>
-                                                <TouchableOpacity style={styles.courseViewBtn} onPress={() => handlePayment(course)}>
+                                                <TouchableOpacity style={styles.courseViewBtn} onPress={() => handleRenewCourse(course)}>
                                                     <Text style={styles.courseViewBtnText}>Renew</Text>
                                                 </TouchableOpacity>
 
@@ -228,7 +252,7 @@ const CourseDetailsScreen = ({ navigation, route }) => {
                                                 :
 
                                                 <View style={styles.courseBottom}>
-                                                    <TouchableOpacity style={styles.courseViewBtn}>
+                                                    <TouchableOpacity style={styles.courseViewBtn} onPress={() => handleRenewCourse(course)}>
                                                         <Text style={styles.courseViewBtnText}>Renew</Text>
                                                     </TouchableOpacity>
                                                     <TouchableOpacity style={styles.disabledCourseBuyBtn} disabled={true}>
@@ -243,7 +267,6 @@ const CourseDetailsScreen = ({ navigation, route }) => {
                     }
                 </ScrollView>
             }
-
         </View>
     )
 }
