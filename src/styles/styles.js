@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
         textAlignVertical: "center"
     },
     courseViewBtn: {
-        width: "48.5%",
+        width: "49%",
         height: 40,
         backgroundColor: "white",
         borderWidth: 1.5,
@@ -997,13 +997,11 @@ const styles = StyleSheet.create({
     purchasedCoursesContainer: {
         width: "100%",
         height: "100%",
-        backgroundColor: "white",
-        alignItems: 'center',
-        justifyContent: "center"
+        backgroundColor: "white"
     },
     purchasedCoursesInner: {
         padding: 12,
-        width: '80%',
+        width: '100%',
         flexGrow: 1,
         gap: 10
     },
@@ -1062,6 +1060,7 @@ const styles = StyleSheet.create({
     },
     walletBottom: {
         padding: 24,
+        paddingTop: 18,
         width: "100%",
         height: Dimensions.get('window').height - 300,
         alignItems: 'center',
@@ -1081,7 +1080,7 @@ const styles = StyleSheet.create({
     },
     amount: {
         color: style.mainColor,
-        fontSize: 42,
+        fontSize: 36,
         fontWeight: '700',
         letterSpacing: 0.4,
         textAlign: "center"
@@ -1110,11 +1109,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#eee"
     },
     checkoutPageInner: {
-       display: "flex",
-       flexDirection: "column",
-       alignItems: "center",
-       justifyContent: "space-between",
-       height: "93%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "space-between",
+        height: "93%",
     },
     checkoutPageScrollView: {
         backgroundColor: "#eee",
@@ -1203,6 +1202,16 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         backgroundColor: style.bgColor
+    },
+
+
+
+
+    /////////////////     WALLET WITHDRAWAL HISTORY      //////////////////
+    walletHistoryContainer: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: "white",
     }
 })
 export default styles

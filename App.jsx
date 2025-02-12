@@ -28,6 +28,7 @@ import InitialLoadingScreen from "./src/screens/InitialLoadingScreen";
 import PurchasedCourse from "./src/screens/PurchasedCourse";
 import Wallet from "./src/screens/Wallet";
 import CheckoutPage from "./src/screens/CheckoutPage";
+import WalletWithdrawalHistory from "./src/screens/WalletWithdrawalHistory";
 
 
 
@@ -49,6 +50,17 @@ function App() {
         <Stack.Screen name={"Course Details"} component={CourseDetailsScreen} options={options} />
         <Stack.Screen name={"StudyMaterial"} component={StudyMaterialScreen} options={options} />
         <Stack.Screen name="Video" component={VideoScreen} options={options} />
+      </Stack.Navigator>
+    )
+  }
+
+  function WalletStack() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen name="Wallet Main" component={Wallet} options={options} />
+        <Stack.Screen name="Wallet Withdrawal History" component={WalletWithdrawalHistory} options={options} />
+
+        
       </Stack.Navigator>
     )
   }
@@ -105,7 +117,7 @@ function App() {
 
         <Tab.Screen
           name={"Wallet"}
-          component={Wallet}
+          component={WalletStack}
           options={{
             headerShown: false,
             tabBarLabel: "Wallet",

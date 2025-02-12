@@ -1,8 +1,8 @@
-import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, ScrollView, Text, Touchable, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import styles from "./../styles/styles";
 import axios from 'axios';
-import { BASE_URL } from '../services/apiManager';
+import { BASE_URL, URL } from '../services/apiManager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomHeader from '../components/CustomHeader';
 import { apiErrorHandler } from '../helper';
@@ -31,6 +31,7 @@ const PurchasedCourse = ({ navigation }) => {
             setError(null);
 
             const refreshToken = JSON.parse(await AsyncStorage.getItem("refreshToken"));
+            console.log(refreshToken)
             const response = await axios.get(`${BASE_URL}/order-history/?refresh_token=${refreshToken}`);
             console.log("purchase history response===>", response.data);
 
@@ -152,8 +153,8 @@ const PurchasedCourse = ({ navigation }) => {
             {
                 loading ?
 
-                    <View>
-                        <ActivityIndicator size={24} color={style.mainColor} />
+                    <View style={{ width: "100%", height: "100%", alignItems: "center", justifyContent: "center" }}>
+                        <ActivityIndicator size={"large"} color={style.mainColor} />
                         <Text>Loading..</Text>
                     </View>
 
@@ -163,37 +164,52 @@ const PurchasedCourse = ({ navigation }) => {
 
                         <Text style={[styles.courseHeading, { marginBottom: 20 }]}>Purchased Courses</Text>
 
-                        {courseList.map((course, i) => (
+                        {
+                            courseList?.length > 0 ?
 
-                            <View style={[styles.courseDetailsCardContainer, { width: "80%" }]} key={i}>
-                                <View style={styles.cardTop}>
-                                    <View style={styles.courseImageContainer}>
-                                        <Image source={{ uri: `http://192.168.29.214:8000/${course.image}` }} style={styles.courseImage} />
+                                courseList.map((course, i) => (
+
+                                    <View style={[styles.courseDetailsCardContainer, { width: "100%" }]} key={i}>
+                                        <View style={styles.cardTop}>
+                                            <View style={styles.courseImageContainer}>
+                                                <Image source={{ uri: `${URL}/${course.image}` }} style={styles.courseImage} />
+                                            </View>
+
+                                            <View style={[styles.courseDetails, { marginTop: 0 }]}>
+                                                <Text style={{ fontWeight: "400" }}>Course:  <Text style={{ fontWeight: "500" }}>{course.course_name}</Text></Text>
+                                                <Text style={{ fontWeight: "400" }}>Price:  <Text style={{ fontWeight: "500" }}>₹ {Math.floor(course.amount)}</Text></Text>
+                                                <Text style={{ fontWeight: "400" }}>Purcahsed on:  <Text style={{ fontWeight: "500" }}>{course.purchase_date}</Text></Text>
+                                                <Text style={{ fontWeight: "400" }}>Expiring on:  <Text style={{ fontWeight: "500" }}>{course.expiration_date}</Text></Text>
+                                            </View>
+                                        </View>
+
+                                        <View style={[styles.courseBottom, { gap: 10 }]}>
+                                            {course.times !== "2" &&
+                                                <TouchableOpacity style={styles.courseViewBtn} onPress={() => navigation.navigate("Checkout", { state: "renew", course: course })}>
+                                                    <Text style={styles.courseViewBtnText}>Renew</Text>
+                                                </TouchableOpacity>
+                                            }
+                                            {
+                                                course.times !== "0" &&
+                                                <TouchableOpacity style={[styles.courseBuyBtn, { width: course.times === "2" ? "100%" : "49%" }]}>
+                                                    <Text style={styles.courseBuyBtnText}>Explore</Text>
+                                                </TouchableOpacity>
+                                            }
+                                        </View>
                                     </View>
 
-                                    <View style={[styles.courseDetails, { marginTop: 0 }]}>
-                                        <Text style={{ fontWeight: "400" }}>Course:  <Text style={{ fontWeight: "500" }}>{course.course_name}</Text></Text>
-                                        <Text style={{ fontWeight: "400" }}>Price:  <Text style={{ fontWeight: "500" }}>₹ {course.amount_paid}</Text></Text>
-                                        <Text style={{ fontWeight: "400" }}>Purcahsed on:  <Text style={{ fontWeight: "500" }}>{course.purchase_date}</Text></Text>
-                                        <Text style={{ fontWeight: "400" }}>Expiring on:  <Text style={{ fontWeight: "500" }}>{course.expiration_date}</Text></Text>
-                                    </View>
-                                </View>
 
-                                <View style={[styles.courseBottom, { gap: 10 }]}>
-                                    {course.times !== "2" &&
-                                        <TouchableOpacity style={[styles.courseViewBtn, { width: "80%" }]}>
-                                            <Text style={styles.courseViewBtnText}>Renew</Text>
-                                        </TouchableOpacity>
-                                    }
-                                    {
-                                        course.times !== "0" &&
-                                        <TouchableOpacity style={[styles.courseBuyBtn, { width: "80%" }]}>
-                                            <Text style={styles.courseBuyBtnText}>Explore</Text>
-                                        </TouchableOpacity>
-                                    }
+                                ))
+
+                                :
+
+                                <View style={{width: "100%", height: "100%", alignItems: "center", marginTop: 48}}>
+                                    <Text style={{ textAlign: 'center', }}>No courses purchased</Text>
+                                    <TouchableOpacity style={[styles.solidBtn, {width: "50%"}]} onPress={() => navigation.navigate("Tab", {screen: "Homestack"})}>
+                                        <Text style={styles.solidBtnText}>Purchase</Text>
+                                    </TouchableOpacity>
                                 </View>
-                            </View>
-                        ))}
+}
                     </ScrollView>
             }
 

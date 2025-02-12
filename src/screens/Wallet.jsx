@@ -10,7 +10,7 @@ import axios from 'axios';
 import wallet from "./../../assests/images/wallet-money-isolated-600nw-627068804.webp";
 
 
-const Wallet = () => {
+const Wallet = ({navigation}) => {
     const [user, setUser] = useState();
     const [loading, setLoading] = useState(true);
 
@@ -64,7 +64,7 @@ const Wallet = () => {
                     </View>
 
                     <View style={styles.walletBottom}>
-                        <View style={{ height: Dimensions.get('window').height - 400, alignItems: 'center', paddingTop: 28 }}>
+                        <View style={{ height: Dimensions.get('window').height - 450, alignItems: 'center' }}>
                             <Image source={wallet} style={styles.walletIcon}/>
                             <Text style={styles.creditHead}>Your Credit Points</Text>
                             <Text style={styles.amount}>{user.cus_wallet}</Text>
@@ -72,6 +72,9 @@ const Wallet = () => {
 
                         <TouchableOpacity style={styles.withdrawButton}>
                             <Text style={styles.withdrawButtonText}>Withdraw</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.borderBtn, {borderWidth: 0, height: 24, marginTop: 8,}]} onPress={() => navigation.navigate("Wallet Withdrawal History")}>
+                            <Text style={styles.borderBtnText}>Transaction History</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

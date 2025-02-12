@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, Modal, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react';
 import styles from "./../styles/styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -16,20 +16,23 @@ import Loader from '../components/Loader';
 
 const CheckoutPage = ({ route }) => {
     const { course } = route.params || null;
+    const { state } = route.params || null;
 
-    const [walletPointsApplied, setWalletPointsApplied] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(route.params.course || null);
+    const [courseId, setCourseId] = useState(state === "purchase" ? route.params.course.id : route.params.course.course_id);
+    const [walletPointsApplied, setWalletPointsApplied] = useState(false);
     const [showPaymentLoader, setShowPaymentLoader] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
     const [walletPoints, setWalletPoints] = useState(null);
-    const [totalPrice, setTotalPrice] = useState(course.offer_price);
+    const [appliedWalletPoints, setAppliedWalletPoints] = useState(null);
+    const [totalPrice, setTotalPrice] = useState(course.offer_price || course.amount);
+    // const [pointsApplySuccess, setPointsApplySuccess] = useState(false);
 
     const navigation = useNavigation();
 
-    const { state } = route.params || null;
     console.log(state, course)
 
 
@@ -37,17 +40,27 @@ const CheckoutPage = ({ route }) => {
     const calculateAndAdjustTotalPoints = () => {
         setLoading(true)
         setWalletPointsApplied(true);
-        console.log("points===>", user.cus_wallet);
-        const points = user.cus_wallet;
-        const total = parseInt(totalPrice) - parseInt(points);
-        setTotalPrice(total);
+        console.log("points===>", walletPoints, totalPrice);
+
+        if (parseInt(walletPoints) < parseInt(totalPrice)) {
+            const total = parseInt(totalPrice) - parseInt(walletPoints);
+            setTotalPrice(total);
+        }
+        else {
+            const remainingPoints = (parseInt(walletPoints) - parseInt(totalPrice)) + 1;
+            console.log("remaining points===>", remainingPoints);
+            setWalletPoints(remainingPoints)
+            setAppliedWalletPoints(Math.floor(parseInt(totalPrice) - 1));
+            setTotalPrice(1);
+        }
         setLoading(false);
     }
 
     const cancelPoints = () => {
         setLoading(true);
         setWalletPointsApplied(false);
-        setTotalPrice(course.offer_price);
+        setTotalPrice(course.offer_price || course.amount);
+        getUserProfile()
         setLoading(false);
     }
 
@@ -56,22 +69,23 @@ const CheckoutPage = ({ route }) => {
     let razorpayKeyId = 'rzp_test_N00NCbB5uYXmF3';
     let razorpayKeySecret = 'wgSa6OjnRLwQLcby6jhy7EMu';
 
-    const handlePurchasedCourse = async () => {
+    const handlePurchaseCourse = async () => {
         setShowPaymentLoader(true);
+        console.log("courseId===>", courseId)
         let course_ids = [];
-        course_ids.push(course.id);
+        course_ids.push(courseId);
 
         const refreshToken = JSON.parse(await AsyncStorage.getItem('refreshToken'));
         const currentUser = JSON.parse(await AsyncStorage.getItem("currentUser"));
-        // console.log(currentUser, refreshToken);
+        console.log("appliedWalletPoints====>", appliedWalletPoints);
 
         const body = {
             course_ids: course_ids,
             name: currentUser.fullName,
             mobile: currentUser.mobile,
             email: currentUser.email,
-            wallet_points: walletPointsApplied ? user.cus_wallet : 0,
-            total_price: course.offer_price,
+            wallet_points: walletPointsApplied ? parseInt(walletPoints) < parseInt(totalPrice) ? walletPoints.toString() : appliedWalletPoints.toString() : "0",
+            total_price: course.offer_price || course.amount_paid,
         }
 
         try {
@@ -113,7 +127,88 @@ const CheckoutPage = ({ route }) => {
                     if (response?.status === 200) {
                         const message = response?.data.message;
                         ToastAndroid.show(message, ToastAndroid.SHORT);
-                        navigation.navigate("Tab", {screen: "Course Details"})
+                        navigation.navigate("Tab", { screen: "PurchasedCourse" })
+                    }
+                    else {
+                        const errMsg = apiErrorHandler(response);
+                        ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+                    }
+
+                })
+                .catch(error => {
+                    console.error('Razorpay error:', error);
+                    const errMsg = apiErrorHandler(error);
+                    ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+                });
+        } catch (error) {
+            console.error('Payment error:', error.message);
+            const errMsg = apiErrorHandler(error);
+            ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+        } finally {
+            setShowPaymentLoader(false);
+            onRefresh();
+        }
+    };
+
+    const handleRenewCourse = async () => {
+        setShowPaymentLoader(true);
+        console.log("courseId===>", courseId)
+        let course_ids = [];
+        course_ids.push(courseId);
+
+        const refreshToken = JSON.parse(await AsyncStorage.getItem('refreshToken'));
+        const currentUser = JSON.parse(await AsyncStorage.getItem("currentUser"));
+        console.log("appliedWalletPoints====>", appliedWalletPoints);
+
+        const body = {
+            course_ids: course_ids,
+            name: currentUser.fullName,
+            mobile: currentUser.mobile,
+            email: currentUser.email,
+            wallet_points: walletPointsApplied ? parseInt(walletPoints) < parseInt(totalPrice) ? walletPoints.toString() : appliedWalletPoints.toString() : "0",
+            total_price: course.offer_price || course.amount_paid,
+        }
+
+        try {
+            console.log("body===>", body);
+
+            const response = await axios.post(`${BASE_URL}/create_order/?refresh_token=${refreshToken}`, body);
+
+            console.log("create renew order response===>", response.data);
+
+
+            const orderId = response?.data?.order_id;
+            const amount = response?.data?.amount;
+
+            const options = {
+                currency: 'INR',
+                key: razorpayKeyId,
+                amount: amount,
+                name: 'Course',
+                order_id: orderId
+            };
+
+            setShowPaymentLoader(false)
+
+            RazorpayCheckout.open(options)
+                .then(async data => {
+                    const bodyData = {
+                        razorpay_payment_id: data.razorpay_payment_id,
+                        razorpay_order_id: data.razorpay_order_id,
+                        razorpay_signature: data.razorpay_signature,
+                    };
+                    // console.log('Payment Data:', bodyData);
+
+                    const response = await axios.post(
+                        `${BASE_URL}/verify_renew_payment/`, // Correct endpoint
+                        bodyData,
+                    );
+                    console.log("Payment final response=======================>", response);
+
+                    if (response?.status === 200) {
+                        const message = response?.data.message;
+                        ToastAndroid.show(message, ToastAndroid.SHORT);
+                        navigation.navigate("Tab", { screen: "PurchasedCourse" })
                     }
                     else {
                         const errMsg = apiErrorHandler(response);
@@ -151,6 +246,7 @@ const CheckoutPage = ({ route }) => {
             if (response.status === 200) {
                 const data = response.data;
                 setUser(data);
+                setWalletPoints(data.cus_wallet);
             }
 
         } catch (error) {
@@ -203,65 +299,73 @@ const CheckoutPage = ({ route }) => {
                                 <View style={styles.itemCardContainer}>
                                     <View style={styles.cardTop}>
                                         <View style={styles.courseImageContainer}>
-                                            <Image source={{ uri: course.image }} style={styles.courseImage} />
+                                            <Image source={{ uri: course.image || `http://192.168.29.214:8000/${course.image}` }} style={styles.courseImage} />
                                         </View>
 
                                         <View style={styles.courseDetails}>
-                                            <Text style={{ fontWeight: "400" }}>Course:  <Text style={{ fontWeight: "500" }}>{course.name}</Text></Text>
-                                            <Text style={{ fontWeight: "400" }}>Price:   <Text style={{ fontWeight: "500" }}>₹ {course.offer_price}</Text> <Text style={{ color: "gray", textDecorationLine: 'line-through' }}>{course.mrp}</Text></Text>
+                                            <Text style={{ fontWeight: "400" }}>Course:  <Text style={{ fontWeight: "500" }}>{course.name || course.course_name}</Text></Text>
+                                            <Text style={{ fontWeight: "400" }}>Price:   <Text style={{ fontWeight: "500" }}>₹ {course.offer_price || course.amount}</Text> <Text style={{ color: "gray", textDecorationLine: 'line-through' }}>{course.mrp}</Text></Text>
                                         </View>
                                     </View>
                                 </View>
                             </View>
 
-                            <View style={styles.walletPointsContainer}>
-                                <View style={styles.walletBadge}>
-                                    <Text style={{ letterSpacing: 0.5, color: "white", fontSize: 13, textAlign: "center", fontWeight: "500" }}>Wallet</Text>
-                                </View>
-                                <View style={{ display: "flex", flexDirection: "row", alignItems: "center", width: "100%", paddingLeft: 10 }}>
-                                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 2, width: "58%", paddingLeft: 10 }}>
-                                        <AntDesign name={"checkcircle"} size={18} color={"green"} />
-                                        <Text style={{ color: style.mainColor, fontSize: 16, paddingLeft: 6 }}>You have <Text style={{ fontSize: 18, fontWeight: "500" }}>{user.cus_wallet}</Text> wallet points</Text>
+                            {walletPoints > 0 &&
+                                <View style={styles.walletPointsContainer}>
+                                    <View style={styles.walletBadge}>
+                                        <Text style={{ letterSpacing: 0.5, color: "white", fontSize: 13, textAlign: "center", fontWeight: "500" }}>Wallet</Text>
                                     </View>
-                                    {walletPointsApplied &&
-                                        <View style={styles.walletBadge}>
-                                            <Text style={{ paddingHorizontal: 4, letterSpacing: 0.2, color: "white", fontSize: 11, textAlign: "center", fontWeight: "500" }}>Applied</Text>
+                                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", width: "100%", paddingLeft: 10 }}>
+                                        <View style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 2, width: "58%", paddingLeft: 10 }}>
+                                            <AntDesign name={"checkcircle"} size={18} color={"green"} />
+                                            <Text style={{ color: style.mainColor, fontSize: 16, paddingLeft: 6 }}>You have <Text style={{ fontSize: 18, fontWeight: "500" }}>{walletPoints}</Text> wallet points</Text>
                                         </View>
+                                        {walletPointsApplied &&
+                                            <View style={styles.walletBadge}>
+                                                <Text style={{ paddingHorizontal: 4, letterSpacing: 0.2, color: "white", fontSize: 11, textAlign: "center", fontWeight: "500" }}>Applied</Text>
+                                            </View>
+                                        }
+                                    </View>
+                                    {
+                                        !walletPointsApplied ?
+                                            <TouchableOpacity style={[styles.borderBtn, { borderRadius: 24, height: 36, marginTop: 12, width: "75%" }]} onPress={() => calculateAndAdjustTotalPoints()}>
+                                                <Text style={styles.borderBtnText}>Apply points</Text>
+                                            </TouchableOpacity>
+                                            :
+                                            <TouchableOpacity style={[styles.borderBtn, { borderRadius: 24, height: 36, marginTop: 12, width: "75%" }]} onPress={() => cancelPoints()}>
+                                                <Text style={styles.borderBtnText}>Cancel points</Text>
+                                            </TouchableOpacity>
                                     }
                                 </View>
-                                {
-                                    !walletPointsApplied ?
-                                        <TouchableOpacity style={[styles.borderBtn, { borderRadius: 24, height: 36, marginTop: 12, width: "75%" }]} onPress={() => calculateAndAdjustTotalPoints()}>
-                                            <Text style={styles.borderBtnText}>Apply points</Text>
-                                        </TouchableOpacity>
-                                        :
-                                        <TouchableOpacity style={[styles.borderBtn, { borderRadius: 24, height: 36, marginTop: 12, width: "75%" }]} onPress={() => cancelPoints()}>
-                                            <Text style={styles.borderBtnText}>Cancel points</Text>
-                                        </TouchableOpacity>
-                                }
-                            </View>
+                            }
 
                             <View style={styles.billingDetailsSections}>
                                 <Text style={{ color: "black", fontSize: 16, marginBottom: 12 }}>Total Summary</Text>
                                 <View style={[styles.spaceDataRow, { width: "98%" }]}>
                                     <Text>Mrp</Text>
-                                    <Text>₹ {selectedCourse.mrp}</Text>
+                                    <Text>₹ {selectedCourse.mrp || selectedCourse.amount}</Text>
                                 </View>
 
-                                <View style={[styles.spaceDataRow, { width: "98%" }]}>
-                                    <Text>Discount</Text>
-                                    <Text>- {selectedCourse.discount_percentage}%</Text>
-                                </View>
+                                {
+                                    state !== "renew" &&
+                                    <View style={[styles.spaceDataRow, { width: "98%" }]}>
+                                        <Text>Discount</Text>
+                                        <Text>{selectedCourse.discount_percentage}%</Text>
+                                    </View>
+                                }
 
-                                <View style={[styles.spaceDataRow, { width: "98%" }]}>
-                                    <Text>Offer price</Text>
-                                    <Text>{selectedCourse.offer_price}</Text>
-                                </View>
+                                {
+                                    state !== "renew" &&
+                                    <View style={[styles.spaceDataRow, { width: "98%" }]}>
+                                        <Text>Offer price</Text>
+                                        <Text>₹ {selectedCourse.offer_price}</Text>
+                                    </View>
+                                }
 
                                 {walletPointsApplied &&
                                     <View style={[styles.spaceDataRow, { width: "98%" }]}>
                                         <Text>Wallet points</Text>
-                                        <Text>- {user.cus_wallet}</Text>
+                                        <Text>{parseInt(walletPoints) < parseInt(totalPrice) ? walletPoints : appliedWalletPoints}</Text>
                                     </View>
                                 }
 
@@ -269,7 +373,7 @@ const CheckoutPage = ({ route }) => {
 
                                 <View style={[styles.spaceDataRow, { width: "98%" }]}>
                                     <Text>Total</Text>
-                                    <Text>{totalPrice}</Text>
+                                    <Text>₹ {totalPrice}</Text>
                                 </View>
                             </View>
 
@@ -278,17 +382,28 @@ const CheckoutPage = ({ route }) => {
                         <View style={styles.checkoutPageFooter}>
                             <Text style={[styles.boldText, { marginTop: 0, }]}>₹ {totalPrice}</Text>
 
-                            <TouchableOpacity style={[styles.orderButton, { width: "60%" }]} onPress={() => handlePurchasedCourse()}>
+                            <TouchableOpacity style={[styles.orderButton, { width: "60%" }]} onPress={() => state === "purchase" ? handlePurchaseCourse() : handleRenewCourse()}>
                                 <Text style={styles.orderButtonText}>Continue</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
 
+                    {/* <Modal
+                        transparent={true}
+                        animationType="slide"
+                        visible={pointsApplySuccess}
+                    >
+                        <View style={styles.pointsSuccessModalOverlay}>
+                            <View style={styles.pointsSuccessModalContent}>
+                                <ActivityIndicator size={32} color={style.mainColor} />
+                                <Text style={styles.loadingText}>Success</Text>
+                            </View>
+                        </View>
+                    </Modal> */}
+
                     {showToast && <CustomToast message={successMessage} onPress={() => navigation.navigate("Cart")} />}
 
                     {showPaymentLoader && <Loader modalVisible={showPaymentLoader} closeModal={() => setShowPaymentLoader(false)} />}
-
-                    
                 </>
             }
         </View>
