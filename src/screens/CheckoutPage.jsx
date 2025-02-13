@@ -7,31 +7,30 @@ import { style } from '../styles/globalStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '../services/apiManager';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
 import RazorpayCheckout from "react-native-razorpay";
 import Loader from '../components/Loader';
+import successImage from "./../../assests/images/success_image.gif";
+import CustomToast from '../components/CustomToast';
 
 
 
 
-const CheckoutPage = ({ route }) => {
+const CheckoutPage = ({ route, navigation }) => {
     const { course } = route.params || null;
     const { state } = route.params || null;
 
     const [selectedCourse, setSelectedCourse] = useState(route.params.course || null);
-    const [courseId, setCourseId] = useState(state === "purchase" ? route.params.course.id : route.params.course.course_id);
+    const [courseId, setCourseId] = useState(state === "purchase" ? route.params.course.id : route.params.course.course_id || route.params.course.id );
     const [walletPointsApplied, setWalletPointsApplied] = useState(false);
     const [showPaymentLoader, setShowPaymentLoader] = useState(false);
-    const [showToast, setShowToast] = useState(false);
-    const [successMessage, setSuccessMessage] = useState(null);
+    // const [showToast, setShowToast] = useState(false);
+    // const [successMessage, setSuccessMessage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
     const [walletPoints, setWalletPoints] = useState(null);
     const [appliedWalletPoints, setAppliedWalletPoints] = useState(null);
     const [totalPrice, setTotalPrice] = useState(course.offer_price || course.amount);
-    // const [pointsApplySuccess, setPointsApplySuccess] = useState(false);
-
-    const navigation = useNavigation();
+    const [successModal, setSuccessModal] = useState(false);
 
     console.log(state, course)
 
@@ -126,29 +125,33 @@ const CheckoutPage = ({ route }) => {
 
                     if (response?.status === 200) {
                         const message = response?.data.message;
+                        setSuccessModal(true);
                         ToastAndroid.show(message, ToastAndroid.SHORT);
-                        navigation.navigate("Tab", { screen: "PurchasedCourse" })
                     }
                     else {
                         const errMsg = apiErrorHandler(response);
                         ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+                        setSuccessModal(false);
                     }
 
                 })
                 .catch(error => {
                     console.error('Razorpay error:', error);
                     const errMsg = apiErrorHandler(error);
-                    ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+                    setSuccessModal(false);
+                    ToastAndroid.show("Something went wrong, please try again!!", ToastAndroid.SHORT);
                 });
         } catch (error) {
             console.error('Payment error:', error.message);
             const errMsg = apiErrorHandler(error);
-            ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+            setSuccessModal(false);
+            ToastAndroid.show("Something went wrong, please try again!!", ToastAndroid.SHORT);
         } finally {
             setShowPaymentLoader(false);
             onRefresh();
         }
     };
+
 
     const handleRenewCourse = async () => {
         setShowPaymentLoader(true);
@@ -166,7 +169,7 @@ const CheckoutPage = ({ route }) => {
             mobile: currentUser.mobile,
             email: currentUser.email,
             wallet_points: walletPointsApplied ? parseInt(walletPoints) < parseInt(totalPrice) ? walletPoints.toString() : appliedWalletPoints.toString() : "0",
-            total_price: course.offer_price || course.amount_paid,
+            total_price: course.offer_price || course.amount,
         }
 
         try {
@@ -207,8 +210,9 @@ const CheckoutPage = ({ route }) => {
 
                     if (response?.status === 200) {
                         const message = response?.data.message;
+                        setSuccessModal(true);
                         ToastAndroid.show(message, ToastAndroid.SHORT);
-                        navigation.navigate("Tab", { screen: "PurchasedCourse" })
+                        // navigation.navigate("Tab", { screen: "PurchasedCourse" })
                     }
                     else {
                         const errMsg = apiErrorHandler(response);
@@ -231,6 +235,11 @@ const CheckoutPage = ({ route }) => {
         }
     };
 
+
+    const handleCloseSuccessModal = () => {
+        setSuccessModal(false);
+        navigation.goBack();
+    }
 
 
 
@@ -299,7 +308,7 @@ const CheckoutPage = ({ route }) => {
                                 <View style={styles.itemCardContainer}>
                                     <View style={styles.cardTop}>
                                         <View style={styles.courseImageContainer}>
-                                            <Image source={{ uri: course.image || `http://192.168.29.214:8000/${course.image}` }} style={styles.courseImage} />
+                                            <Image source={{ uri: course.image.includes("http") ? course.image : `http://192.168.29.214:8000/${course.image}` }} style={styles.courseImage} />
                                         </View>
 
                                         <View style={styles.courseDetails}>
@@ -365,15 +374,15 @@ const CheckoutPage = ({ route }) => {
                                 {walletPointsApplied &&
                                     <View style={[styles.spaceDataRow, { width: "98%" }]}>
                                         <Text>Wallet points</Text>
-                                        <Text>{parseInt(walletPoints) < parseInt(totalPrice) ? walletPoints : appliedWalletPoints}</Text>
+                                        <Text style={{color: "green"}}>-  ₹ {parseInt(walletPoints) < parseInt(totalPrice) ? walletPoints : appliedWalletPoints}</Text>
                                     </View>
                                 }
 
                                 <View style={[styles.divider, { marginVertical: 12 }]}></View>
 
                                 <View style={[styles.spaceDataRow, { width: "98%" }]}>
-                                    <Text>Total</Text>
-                                    <Text>₹ {totalPrice}</Text>
+                                    <Text style={{fontWeight: "500"}}>Total</Text>
+                                    <Text style={{fontWeight: "500"}}>₹ {totalPrice}</Text>
                                 </View>
                             </View>
 
@@ -388,20 +397,27 @@ const CheckoutPage = ({ route }) => {
                         </View>
                     </View>
 
-                    {/* <Modal
+                    <Modal
                         transparent={true}
                         animationType="slide"
-                        visible={pointsApplySuccess}
+                        visible={successModal}
                     >
-                        <View style={styles.pointsSuccessModalOverlay}>
-                            <View style={styles.pointsSuccessModalContent}>
-                                <ActivityIndicator size={32} color={style.mainColor} />
-                                <Text style={styles.loadingText}>Success</Text>
+                        <View style={styles.successModalOverlay}>
+                            <View style={styles.successModalContent}>
+                                <Image source={successImage} style={styles.successImage} />
+                                <Text style={{ textAlign: 'center', width: "100%", marginBottom: 12, fontWeight: "500", color: "green" }}>Payment successfull</Text>
+                                <Text style={{ textAlign: 'center', width: "100%", marginBottom: 22, fontWeight: "500" }}>You have {state === "purchase" ? "purchased" : "renewed"} the course.</Text>
+
+                                <TouchableOpacity style={[styles.borderBtn, { borderWidth: 0, height: 24, backgroundColor: "transparent" }]} onPress={() => navigation.navigate("Tab", { screen: "PurchasedCourse" })}>
+                                    <Text style={styles.borderBtnText}>See Purchase History</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={[styles.borderBtn, { borderWidth: 0, height: 24, marginTop: 14, backgroundColor: "transparent" }]} onPress={() => handleCloseSuccessModal()}>
+                                    <Text style={styles.borderBtnText}>Close</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
-                    </Modal> */}
-
-                    {showToast && <CustomToast message={successMessage} onPress={() => navigation.navigate("Cart")} />}
+                    </Modal>
 
                     {showPaymentLoader && <Loader modalVisible={showPaymentLoader} closeModal={() => setShowPaymentLoader(false)} />}
                 </>

@@ -1,5 +1,5 @@
 import { ActivityIndicator, Dimensions, Image, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styles from "./../styles/styles";
 import CustomHeader from '../components/CustomHeader';
 import image from "./../../assests/images/login_background2.jpg";
@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '../services/apiManager';
 import axios from 'axios';
 import wallet from "./../../assests/images/wallet-money-isolated-600nw-627068804.webp";
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const Wallet = ({navigation}) => {
@@ -35,9 +36,11 @@ const Wallet = ({navigation}) => {
         }
     }
 
-    useEffect(() => {
+   useFocusEffect(
+    useCallback(() => {
         getUserProfile()
     }, [])
+   )
 
 
     return (
@@ -45,8 +48,8 @@ const Wallet = ({navigation}) => {
             <CustomHeader />
 
             {loading ?
-                <View>
-                    <ActivityIndicator size={'small'} color={style.mainColor} />
+                <View style={{width: "100%", height: "80%", alignItems: "center", justifyContent: "center"}}>
+                    <ActivityIndicator size={'large'} color={style.mainColor} />
                     <Text>Loading..</Text>
                 </View>
 

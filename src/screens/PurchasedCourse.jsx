@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, ScrollView, Text, Touchable, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import styles from "./../styles/styles";
 import axios from 'axios';
@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomHeader from '../components/CustomHeader';
 import { apiErrorHandler } from '../helper';
 import { style } from '../styles/globalStyles';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import CustomToast from '../components/CustomToast';
 import Loader from '../components/Loader';
 
@@ -20,6 +20,9 @@ const PurchasedCourse = ({ navigation }) => {
     const [showPaymentLoader, setShowPaymentLoader] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState(null);
+
+
+    const navigationHook = useNavigation();
 
 
 
@@ -185,13 +188,13 @@ const PurchasedCourse = ({ navigation }) => {
 
                                         <View style={[styles.courseBottom, { gap: 10 }]}>
                                             {course.times !== "2" &&
-                                                <TouchableOpacity style={styles.courseViewBtn} onPress={() => navigation.navigate("Checkout", { state: "renew", course: course })}>
+                                                <TouchableOpacity style={styles.courseViewBtn} onPress={() => navigationHook.navigate("Checkout", { state: "renew", course: course })}>
                                                     <Text style={styles.courseViewBtnText}>Renew</Text>
                                                 </TouchableOpacity>
                                             }
                                             {
                                                 course.times !== "0" &&
-                                                <TouchableOpacity style={[styles.courseBuyBtn, { width: course.times === "2" ? "100%" : "49%" }]}>
+                                                <TouchableOpacity style={[styles.courseBuyBtn, { width: course.times === "2" ? "100%" : "49%" }]} onPress={() => navigationHook.navigate("Tab", {screen: "StudyMaterial"})}>
                                                     <Text style={styles.courseBuyBtnText}>Explore</Text>
                                                 </TouchableOpacity>
                                             }

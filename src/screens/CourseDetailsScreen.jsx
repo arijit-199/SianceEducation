@@ -20,6 +20,8 @@ const CourseDetailsScreen = ({ navigation, route }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [successMessage, setSuccessMessage] = useState(null);
+    const [showToast, setShowToast] = useState(false);
 
     const { selectedBoard } = route.params;
 
@@ -229,7 +231,7 @@ const CourseDetailsScreen = ({ navigation, route }) => {
 
                                         : course.course_purchase === "1" ?
                                             <View style={styles.courseBottom}>
-                                                <TouchableOpacity style={styles.courseViewBtn} onPress={() => handleRenewCourse(course)}>
+                                                <TouchableOpacity style={styles.courseViewBtn} onPress={() => navigation.navigate("Checkout", {course: course, state: "renew"})}>
                                                     <Text style={styles.courseViewBtnText}>Renew</Text>
                                                 </TouchableOpacity>
 
@@ -267,6 +269,8 @@ const CourseDetailsScreen = ({ navigation, route }) => {
                     }
                 </ScrollView>
             }
+
+            {showToast && <CustomToast message={successMessage} onPress={() => navigation.navigate("Cart")}/>}
         </View>
     )
 }

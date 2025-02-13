@@ -21,7 +21,7 @@ export const lateralPosition = (Dimensions.get('window').width * 0.08) / 2;
 const styles = StyleSheet.create({
     toastContainer: {
         padding: 12,
-        backgroundColor: style.mainColor,
+        backgroundColor: style.bgColor,
         width: "92%",
         height: 60,
         zIndex: 999,
@@ -33,10 +33,14 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        shadowColor: "gray",
+        shadowOffset: { width: 8, height: -2 },
+        elevation: 6,
+        shadowRadius: 12,
     },
     toastMessage: {
-        color: "white",
+        color: style.mainColor,
         fontSize: 14,
         fontWeight: "500",
         textTransform: 'uppercase',

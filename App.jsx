@@ -29,6 +29,7 @@ import PurchasedCourse from "./src/screens/PurchasedCourse";
 import Wallet from "./src/screens/Wallet";
 import CheckoutPage from "./src/screens/CheckoutPage";
 import WalletWithdrawalHistory from "./src/screens/WalletWithdrawalHistory";
+import CartCheckoutPage from "./src/screens/CartCheckoutPage";
 
 
 
@@ -193,6 +194,7 @@ function App() {
         <Stack.Screen name="SignupOtp" component={SignupOtp} options={options} />
         <Stack.Screen name="Tab" component={TabScreen} options={options} />
         <Stack.Screen name="Checkout" component={CheckoutPage} options={options} />
+        <Stack.Screen name="CartCheckoutPage" component={CartCheckoutPage} options={options} />
       </Stack.Navigator>
     </NavigationContainer>
   )

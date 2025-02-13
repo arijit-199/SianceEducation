@@ -30,7 +30,7 @@ const Cart = ({ route, navigation }) => {
         fetchCartItems()
         setTimeout(() => {
           setRefreshing(false);
-        }, 2000); // Simulating network request
+        }, 1000); // Simulating network request
       };
 
 
@@ -226,7 +226,7 @@ const Cart = ({ route, navigation }) => {
                                             <Text style={styles.removeButtonText}>Remove</Text>
                                         </TouchableOpacity>
 
-                                        <TouchableOpacity style={styles.removeButton} onPress={() => handlePayment(item.id)}>
+                                        <TouchableOpacity style={styles.removeButton} onPress={() => navigation.navigate("CartCheckoutPage", {items: [item]})}>
                                             <Ionicons name={"flash-outline"} size={24} color={"black"} />
                                             <Text style={styles.removeButtonText}>Buy this now</Text>
                                         </TouchableOpacity>
@@ -245,9 +245,9 @@ const Cart = ({ route, navigation }) => {
 
             {cartItems?.length !== 0 &&
                 <View style={styles.cartFooter}>
-                    <Text style={styles.totalPrice}>₹{totalCartPrice}</Text>
+                    <Text style={styles.totalPrice}>₹ {totalCartPrice}</Text>
 
-                    <TouchableOpacity style={styles.orderButton} onPress={() => handlePayment()}>
+                    <TouchableOpacity style={styles.orderButton} onPress={() => navigation.navigate("CartCheckoutPage", {items: cartItems})}>
                         <Text style={styles.orderButtonText}>Place Order</Text>
                     </TouchableOpacity>
                 </View>

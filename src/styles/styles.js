@@ -3,7 +3,7 @@ import { style } from "./globalStyles";
 import jestConfig from "../../jest.config";
 
 const premiumModalWidth = Dimensions.get('window').width * 0.90
-const premiumModalHeight = Dimensions.get('window').height * 0.4
+const premiumModalHeight = Dimensions.get('window').height * 0.5
 
 const styles = StyleSheet.create({
     ///////////   LOGIN   ///////////
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
     },
     courseDetailsScreenContainer: {
         width: "100%",
-        minHeight: "100%",
+        height: "100%",
         backgroundColor: style.bgColor,
         position: "relative"
     },
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
     },
     courseListContainer: {
         padding: 10,
-        paddingBottom: 100,
+        paddingBottom: 50,
         flexGrow: 1,
         display: "flex",
         flexDirection: "column",
@@ -730,6 +730,22 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         borderRadius: 10,
     },
+    successModalOverlay: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    successModalContent: {
+        width: premiumModalWidth,
+        height: premiumModalHeight,
+        padding: 20,
+        backgroundColor: "white",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        borderRadius: 20,
+    },
     successImage: {
         width: 140,
         height: 140,
@@ -831,7 +847,7 @@ const styles = StyleSheet.create({
     totalPrice: {
         color: "black",
         fontWeight: "500",
-        fontSize: 18
+        fontSize: 20
     },
     disabledCourseViewBtn: {
         width: "48.5%",
