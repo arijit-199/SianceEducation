@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
 
     /////////////    OTP     //////////////////
     otpContainer: {
-        paddingTop: 64,
+        paddingTop: 50,
         padding: 16,
         backgroundColor: "white",
         width: "100%",
@@ -734,7 +734,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        backgroundColor: "rgba(0, 0, 0, 0.7)",
     },
     successModalContent: {
         width: premiumModalWidth,
@@ -1049,7 +1049,7 @@ const styles = StyleSheet.create({
         fontSize: 19,
         fontWeight: "500",
         textAlign: "center",
-        letterSpacing: 0.6
+        letterSpacing: 0.6,
     },
     profileImageContainer: {
         marginTop: 12,
@@ -1224,10 +1224,46 @@ const styles = StyleSheet.create({
 
 
     /////////////////     WALLET WITHDRAWAL HISTORY      //////////////////
-    walletHistoryContainer: {
+    walletWithdarwalHistory: {
         width: "100%",
         height: "100%",
         backgroundColor: "white",
-    }
+    },
+    walletWithdarwalHistoryInner: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: "white",
+    },
+    walletHistoryListContainer: {
+        padding: 12,
+        width: "100%",
+        height: "50%",
+        flexGrow: 1,
+        backgroundColor: "white",
+        gap: 18,
+    },
+    singleTransactionCard: {
+        paddingHorizontal: 12,
+        width: "100%",
+        height: 75,
+        backgroundColor: "white",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderWidth: 0,
+        borderRadius: 10,
+        shadowColor: "gray",
+        shadowOffset: { width: 8, height: -2 },
+        elevation: 6,
+        shadowRadius: 12,
+        marginBottom: 6
+    },
+    singleTransactionCardLeft: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: 'center',
+        gap: 10
+    },
 })
 export default styles

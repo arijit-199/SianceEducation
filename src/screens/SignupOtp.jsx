@@ -60,10 +60,13 @@ const SignupOtp = ({ navigation, route }) => {
 
             if (response.status === 201) {
                 const accessToken = response.data.access_token;
+                const refreshToken = response.data.refresh_token;
+                
                 const currentUser = { fullname, mobile, email, dob, referralCode }
 
                 await AsyncStorage.setItem("currentUser", JSON.stringify(currentUser));
                 await AsyncStorage.setItem("accessToken", JSON.stringify(accessToken));
+                await AsyncStorage.setItem("refreshToken", JSON.stringify(refreshToken));
 
                 ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
                 navigation.navigate("Tab");

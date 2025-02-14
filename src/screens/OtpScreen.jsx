@@ -1,4 +1,4 @@
-import { ActivityIndicator, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Keyboard, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import Entypo from "react-native-vector-icons/Entypo"
 import { style } from './../styles/globalStyles';
@@ -49,6 +49,7 @@ const OtpScreen = ({ navigation, route }) => {
 
         try {
             setLoading(true);
+            Keyboard.dismiss();
             setError(null);
 
             const response = await axios.post(`${BASE_URL}/login/verify-otp/`, body);
@@ -69,8 +70,8 @@ const OtpScreen = ({ navigation, route }) => {
                 await AsyncStorage.setItem("refreshToken", JSON.stringify(refreshToken))
                 await AsyncStorage.setItem("currentUser", JSON.stringify(currentUser))
 
-                ToastAndroid.show("Login successfull", ToastAndroid.SHORT);
                 navigation.navigate("Tab");
+                ToastAndroid.show("Login successfull", ToastAndroid.SHORT);
             }
             else {
                 const errMsg = apiErrorHandler(response);

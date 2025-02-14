@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, Keyboard, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import styles from './../styles/styles';
 import loginBackground from "./../../assests/images/login_background2.jpg";
 import axios from 'axios';
@@ -8,7 +8,7 @@ import { apiErrorHandler } from '../helper';
 
 
 const LoginScreen = ({ navigation }) => {
-    const [email, setEmail] = useState("arijitghosh828@gmail.com");
+    const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -17,6 +17,7 @@ const LoginScreen = ({ navigation }) => {
         if(!email) return ToastAndroid.show("Email is required!!", ToastAndroid.SHORT);
         try {
             setLoading(true)
+            Keyboard.dismiss();
             setError(null);
 
             const response = await axios.post(`${BASE_URL}/login/`, { email: email });

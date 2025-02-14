@@ -1,7 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import axios from "axios";
 import { BASE_URL } from "./apiManager";
-import { apiErrorHandler } from "../helper";
 
 export const logout = async () => {
     try {

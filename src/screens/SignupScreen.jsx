@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import styles from "./../styles/styles";
 import DatePicker from 'react-native-date-picker';
 import axios from 'axios';
+import { BASE_URL } from '../services/apiManager';
+import { apiErrorHandler } from '../helper';
 
 
 
@@ -13,7 +15,7 @@ const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [date, setDate] = useState(new Date());
   const [dob, setDob] = useState("");
-  const [referralCode, setReferralCode] = useState("yNXGIwHC");
+  const [referralCode, setReferralCode] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -41,11 +43,13 @@ const SignupScreen = ({ navigation }) => {
       email: email
     }
 
+    console.log("body===>", body);
+
     try {
       setLoading(true);
       setError(null);
 
-      const response = await axios.post('http://192.168.29.215:8000/api/register/', body);
+      const response = await axios.post(`${BASE_URL}/register/`, body);
       console.log("signup response========>>", response);
 
       if (response?.status === 200) {
@@ -135,10 +139,6 @@ const SignupScreen = ({ navigation }) => {
           }
 
         </TouchableOpacity>
-
-        {error &&
-          <Text style={{ color: "red", marginTop: 24, width: "75%", textAlign: "center" }}>{error}</Text>
-        }
 
         <Text style={styles.link}>Already have an account? <Text onPress={() => navigation.navigate("Login")} style={[styles.borderBtnText, { fontSize: 14 }]}>Login</Text></Text>
       </ScrollView>

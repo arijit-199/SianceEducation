@@ -1,4 +1,4 @@
-import { Dimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View, ActivityIndicator, ToastAndroid } from 'react-native'
+import { Image, ScrollView, Text, TextInput, TouchableOpacity, View, ActivityIndicator, ToastAndroid } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import CustomHeader from '../components/CustomHeader';
 import styles from "./../styles/styles";
@@ -11,8 +11,6 @@ import { style } from '../styles/globalStyles';
 import { BASE_URL } from '../services/apiManager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logout } from '../services/services';
-import Loader from '../components/Loader';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
@@ -97,7 +95,6 @@ const Homescreen = ({ navigation }) => {
     }
   }
 
-  // console.log("boardList====>", boardList)
 
   const handleLogout = async () => {
     const response = await logout();
@@ -115,8 +112,6 @@ const Homescreen = ({ navigation }) => {
       const errMsg = apiErrorHandler(response);
       ToastAndroid.show(errMsg, ToastAndroid.SHORT);
     }
-
-
   }
 
   useEffect(() => {

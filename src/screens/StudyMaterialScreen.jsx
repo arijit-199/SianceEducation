@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react';
 import styles from "./../styles/styles";
 import CustomHeader from '../components/CustomHeader';
@@ -9,6 +9,7 @@ import { BASE_URL } from '../services/apiManager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiErrorHandler } from '../helper';
 import { style } from '../styles/globalStyles';
+import { logout } from '../services/services';
 
 
 
@@ -62,12 +63,31 @@ const StudyMaterialScreen = ({ route, navigation }) => {
 
   }
 
+  const handleLogout = async () => {
+    const response = await logout();
+
+    if (response.status === 200) {
+      const message = response.data.message;
+      // console.log("logout message========>", message);
+
+      await AsyncStorage.removeItem("accessToken");
+      await AsyncStorage.removeItem("refreshToken");
+      await AsyncStorage.removeItem("currentUser");
+      ToastAndroid.show(message, ToastAndroid.SHORT);
+      navigation.navigate("Login");
+    } else {
+      const errMsg = apiErrorHandler(response);
+      ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+    }
+  }
+
+
   useEffect(() => {
     fetchVideoList()
   }, [])
   return (
     <View style={styles.studyMaterialContainer}>
-      <CustomHeader />
+      <CustomHeader onPressLogout={() => handleLogout()} />
 
       <Text style={styles.studyPgTitle}>Videos</Text>
 

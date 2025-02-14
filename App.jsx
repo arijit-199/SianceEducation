@@ -60,8 +60,6 @@ function App() {
       <Stack.Navigator>
         <Stack.Screen name="Wallet Main" component={Wallet} options={options} />
         <Stack.Screen name="Wallet Withdrawal History" component={WalletWithdrawalHistory} options={options} />
-
-        
       </Stack.Navigator>
     )
   }

@@ -11,6 +11,7 @@ import RazorpayCheckout from "react-native-razorpay";
 import { useFocusEffect } from '@react-navigation/native';
 import CustomToast from '../components/CustomToast';
 import Loader from '../components/Loader';
+import { logout } from '../services/services';
 
 
 
@@ -173,6 +174,27 @@ const CourseDetailsScreen = ({ navigation, route }) => {
 
 
 
+    const handleLogout = async () => {
+        const response = await logout();
+
+        if (response.status === 200) {
+            const message = response.data.message;
+            // console.log("logout message========>", message);
+
+            await AsyncStorage.removeItem("accessToken");
+            await AsyncStorage.removeItem("refreshToken");
+            await AsyncStorage.removeItem("currentUser");
+            ToastAndroid.show(message, ToastAndroid.SHORT);
+            navigation.navigate("Login");
+        } else {
+            const errMsg = apiErrorHandler(response);
+            ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+        }
+
+
+    }
+
+
 
     useFocusEffect(
         useCallback(() => {
@@ -189,7 +211,7 @@ const CourseDetailsScreen = ({ navigation, route }) => {
 
     return (
         <View style={styles.courseDetailsScreenContainer}>
-            <CustomHeader />
+            <CustomHeader onPressLogout={() => handleLogout()} />
 
             {loading ?
                 <View style={{ display: "flex", alignItems: 'center', justifyContent: "center" }}>
@@ -231,7 +253,7 @@ const CourseDetailsScreen = ({ navigation, route }) => {
 
                                         : course.course_purchase === "1" ?
                                             <View style={styles.courseBottom}>
-                                                <TouchableOpacity style={styles.courseViewBtn} onPress={() => navigation.navigate("Checkout", {course: course, state: "renew"})}>
+                                                <TouchableOpacity style={styles.courseViewBtn} onPress={() => navigation.navigate("Checkout", { course: course, state: "renew" })}>
                                                     <Text style={styles.courseViewBtnText}>Renew</Text>
                                                 </TouchableOpacity>
 
@@ -270,7 +292,7 @@ const CourseDetailsScreen = ({ navigation, route }) => {
                 </ScrollView>
             }
 
-            {showToast && <CustomToast message={successMessage} onPress={() => navigation.navigate("Cart")}/>}
+            {showToast && <CustomToast message={successMessage} onPress={() => navigation.navigate("Cart")} />}
         </View>
     )
 }

@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, ScrollView, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import styles from "./../styles/styles";
 import axios from 'axios';
@@ -10,6 +10,7 @@ import { style } from '../styles/globalStyles';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import CustomToast from '../components/CustomToast';
 import Loader from '../components/Loader';
+import { logout } from '../services/services';
 
 
 
@@ -135,6 +136,24 @@ const PurchasedCourse = ({ navigation }) => {
     };
 
 
+    const handleLogout = async () => {
+        const response = await logout();
+    
+        if (response.status === 200) {
+          const message = response.data.message;
+          // console.log("logout message========>", message);
+    
+          await AsyncStorage.removeItem("accessToken");
+          await AsyncStorage.removeItem("refreshToken");
+          await AsyncStorage.removeItem("currentUser");
+          ToastAndroid.show(message, ToastAndroid.SHORT);
+          navigation.navigate("Login");
+        } else {
+          const errMsg = apiErrorHandler(response);
+          ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+        }
+      }
+
 
     useFocusEffect(
         useCallback(() => {
@@ -150,7 +169,7 @@ const PurchasedCourse = ({ navigation }) => {
 
     return (
         <View style={styles.purchasedCoursesContainer}>
-            <CustomHeader />
+            <CustomHeader onPressLogout={() => handleLogout()} />
 
 
             {

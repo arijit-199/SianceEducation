@@ -17,6 +17,7 @@ import { BASE_URL } from '../services/apiManager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { style } from '../styles/globalStyles';
 import { useFocusEffect } from '@react-navigation/native';
+import { logout } from '../services/services';
 
 
 
@@ -191,6 +192,24 @@ const Profile = ({ navigation, route }) => {
     }
   };
 
+  const handleLogout = async () => {
+    const response = await logout();
+
+    if (response.status === 200) {
+      const message = response.data.message;
+      // console.log("logout message========>", message);
+
+      await AsyncStorage.removeItem("accessToken");
+      await AsyncStorage.removeItem("refreshToken");
+      await AsyncStorage.removeItem("currentUser");
+      navigation.navigate("Login");
+      ToastAndroid.show(message, ToastAndroid.SHORT);
+    } else {
+      const errMsg = apiErrorHandler(response);
+      ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+    }
+  }
+
 
 
   useFocusEffect(
@@ -202,7 +221,7 @@ const Profile = ({ navigation, route }) => {
 
   return (
     <View style={styles.profileScreenContainer}>
-      <CustomHeader />
+      <CustomHeader onPressLogout={() => handleLogout()} />
 
       {loading ?
         <View style={{ width: "100%", height: "100%", alignItems: "center", justifyContent: 'center' }}>
